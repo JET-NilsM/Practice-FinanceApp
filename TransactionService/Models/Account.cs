@@ -1,12 +1,21 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace TransactionService.Models;
 
 public class Account
 {
-    public int Id { get; set; }
-    public string FullName { get; set; }
-    public EmailAddress Email { get; set; }
-    public string Password { get; set; }
-    public PhoneNumber PhoneNumber { get; set; }
+    //Not created by the user but by the system using UUID like we discussed but not necessary for now.
+    //Can just work with incrementing integers for now.
+    public required int Id { get; set; }
+    public required string FullName { get; set; }
+    
+    [Required]
+    [EmailAddress]
+    public string Email { get; set; }
+    
+    public required string Password { get; set; }
+    [Phone]
+    public string PhoneNumber { get; set; }
     public float AccountBalance { get; set; }
     public AccountType AccountType { get; set; }
 }

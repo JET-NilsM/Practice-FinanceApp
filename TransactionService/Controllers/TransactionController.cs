@@ -22,8 +22,9 @@ public class TransactionController : ControllerBase
     //Since I'm currently only working with lists async is not really necessary but when I get to actually using a service instance,
     //that communicates with a repository with a connection to a database, it is necessary so I'm using it as a preparation. 
     public async Task<IActionResult> CreateTransaction(int senderID, int receiverID, float amount, string description)
+    // public async Task<IActionResult> CreateTransaction(Transaction transaction)
     {
-        Account senderAccount = _accountsModel.Accounts.Where((account) => account.Id == senderID).FirstOrDefault();
+        /*Account senderAccount = _accountsModel.Accounts.Where((account) => account.Id == senderID).FirstOrDefault();
         if (senderAccount == null)
             return BadRequest("Sender ID is invalid");
         //Considered NotFound as well but I think (?) that is only to indicate that webpages do not exist since it returns a 404 (aka webpage not found)
@@ -45,6 +46,7 @@ public class TransactionController : ControllerBase
         };
 
         _transactionsModel.Transactions.Add(newTransaction);
+        */
 
         //I'm not sure what the best approach of updating the balance of both accounts would be?
         //I could let the transaction class handle it but that should probably only be a data container rather than partly a controller

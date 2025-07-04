@@ -2,5 +2,27 @@ namespace TransactionService.Models;
 
 public class AccountsModel
 {
-    public List<Account> Accounts { get; set; }
+    public static List<Account> Accounts = new List<Account>()
+    {
+        new Account()
+        {
+            Id = 1,
+            FullName = "Nils Meijer",
+            Email = "nils@gmail.com",
+            Password = "password123",
+            PhoneNumber =  "+31 6 12345678",
+            AccountBalance = 100.50f,
+            AccountType = AccountType.Student
+        },
+        new Account()
+        {
+            Id = 2,
+            FullName = "Test User",
+            Email = "testUser@gmail.com",
+            Password = "password567",
+            PhoneNumber =  "+31 6 12345678",
+            AccountBalance = 2500.12f,
+            AccountType = AccountType.Student
+        },
+    };
 }
