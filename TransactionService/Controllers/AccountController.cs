@@ -69,17 +69,19 @@ public class AccountController : ControllerBase
         return Ok(AccountsModel.Accounts);
     }
 
-    // [HttpPut( "{id:int}")]
-    // public async Task<IActionResult> UpdateAccount(int id, Account account)
-    // {
-    //     Account selectedAccount = AccountsModel.Accounts.FirstOrDefault(a => a.Id == account.Id);
-    //     if (selectedAccount == null)
-    //         return NotFound($"Account with ID: {account.Id} not found.");
-    //
-    //     selectedAccount = account;
-    //     
-    //     return Ok("Full account updated successfully.");
-    // }
+    [HttpPut( "{givenID:int}")]
+    public async Task<IActionResult> UpdateAccount(int givenID, Account newAccountData)
+    {
+        Account selectedAccount = AccountsModel.Accounts.Where(account => account.Id == givenID).FirstOrDefault();
+        if(selectedAccount == null)
+            return NotFound($"Account with ID: {givenID} not found.");
+        
+        int selectedAccountIndex = AccountsModel.Accounts.IndexOf(selectedAccount);
+
+        AccountsModel.Accounts[selectedAccountIndex] = newAccountData;
+        
+        return Ok($"Full account updated successfully.");
+    }
     //
     // [HttpPatch("{accountId:int}")]
     // public async Task<IActionResult> UpdateEmailAddress(int accountId, string emailAddress)
