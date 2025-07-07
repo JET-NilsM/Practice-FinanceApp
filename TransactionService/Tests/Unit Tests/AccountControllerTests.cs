@@ -94,4 +94,30 @@ public class AccountControllerTests
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal("Domain is not whitelisted.", badRequestResult.Value);
     }
+    
+    [Fact]
+    public async Task DeleteAccount_ShouldReturnNotFound_WhenAccountDoesNotExist()
+    {
+        // Arrange
+        var accountController = new AccountController();
+        Account newAccount = new Account
+        {
+            Id = 126,
+            FullName = "unit test user",
+            Email = "test@gmail.com",
+            PhoneNumber = "+31 6 12345678",
+            Password = "testPassword123",
+            AccountBalance = 500f,
+            AccountType = AccountType.Student,
+        };
+
+        accountController.CreateAccount(newAccount);
+        
+        // Act
+        var result = await accountController.DeleteAccount(newAccount.Id);
+        
+        // Assert
+        var notFoundResult = Assert.IsType<OkObjectResult>(result);
+        Assert.Equal($"Account deleted successfully.", notFoundResult.Value);
+    }
 }

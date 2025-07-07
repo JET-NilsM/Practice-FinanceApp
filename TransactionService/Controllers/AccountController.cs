@@ -84,8 +84,11 @@ public class AccountController : ControllerBase
     //I am using the [FromBody] attribute here because otherwise it is expected as a parameter in Insomnia rather than in the body of the request.
     //And to stay consistent I am using the body as input here as well.
     [HttpPatch("{givenID:int}")]
-    public async Task<IActionResult> UpdateEmailAddress(int givenID, [FromBody]string newEmail)
+    public async Task<IActionResult> UpdateEmailAddress(int givenID, string newEmail)
     {
+        //check if the data is the data we expect, and only update the proprties that have to be updated
+        //check if it works with same method names and different HTTP methods
+        
         Account selectedAccount = AccountsModel.Accounts.FirstOrDefault(a => a.Id == givenID);
         if (selectedAccount == null)
             return NotFound($"Account with ID: {givenID} not found.");
