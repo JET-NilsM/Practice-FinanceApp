@@ -82,20 +82,20 @@ public class AccountController : ControllerBase
         
         return Ok($"Full account updated successfully.");
     }
-    //
-    // [HttpPatch("{accountId:int}")]
-    // public async Task<IActionResult> UpdateEmailAddress(int accountId, string emailAddress)
-    // {
-    //     Account selectedAccount = AccountsModel.Accounts.FirstOrDefault(a => a.Id == accountId);
-    //     if (selectedAccount == null)
-    //         return NotFound($"Account with ID: {accountId} not found.");
-    //     
-    //     //email address validation before assigning
-    //     
-    //     selectedAccount.Email = emailAddress;
-    //
-    //     return Ok("Email address updated successfully.");
-    // }
+    
+    //I am using the [FromBody] attribute here because otherwise it is expected as a parameter in Insomnia rather than in the body of the request. And to stay consistent 
+    //I am using the body as input here as well.
+    [HttpPatch("{givenID:int}")]
+    public async Task<IActionResult> UpdateEmailAddress(int givenID, [FromBody]string newEmail)
+    {
+        Account selectedAccount = AccountsModel.Accounts.FirstOrDefault(a => a.Id == givenID);
+        if (selectedAccount == null)
+            return NotFound($"Account with ID: {givenID} not found.");
+        
+        selectedAccount.Email = newEmail;
+    
+        return Ok($"Email address updated to {newEmail} successfully.");
+    }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteAccount(int id)
