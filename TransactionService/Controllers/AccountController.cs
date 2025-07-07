@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Net.Mail;
 using Microsoft.AspNetCore.Mvc;
 using TransactionService.Models;
+using Xunit.Sdk;
 
 namespace TransactionService.Controllers;
 
@@ -27,13 +28,16 @@ public class AccountController : ControllerBase
         Account existingAccount = AccountsModel.Accounts.FirstOrDefault(a => a.Id == account.Id);
         if(existingAccount != null)
             return BadRequest($"Account with ID: {account.Id} already exists.");
+
+        var emailValidationResult = Utilities.EmailValidation.IsValidEmail(account.Email);
+        if(!emailValidationResult.IsValid)
+            return BadRequest($"{emailValidationResult.Message}");
         
-        if(!Utilities.Email.IsValidEmail(account.Email))
-            return BadRequest($"Invalid email address: {account.Email}");
+        var phoneNumberValidationResult = Utilities.PhoneValidation.IsValidPhoneNumber(account.PhoneNumber);
+        if(!phoneNumberValidationResult.IsValid) 
+            return BadRequest($"{phoneNumberValidationResult.Message}");
         
-        //TODO validate phone number
-        
-        //TODO password validation
+        //TODO password validation and hashing, out of scope for now.
         
         AccountsModel.Accounts.Add(account);
         
@@ -66,8 +70,9 @@ public class AccountController : ControllerBase
         if(selectedAccount == null)
             return NotFound($"Account with ID: {givenID} not found.");
         
-        if(!Utilities.Email.IsValidEmail(newAccountData.Email))
-            return BadRequest($"Invalid email address: {newAccountData.Email}");
+        var validationResult = Utilities.EmailValidation.IsValidEmail(newAccountData.Email);
+        if(!validationResult.IsValid)
+            return BadRequest("Invalid email address: {newAccountData.Email}");
         
         int selectedAccountIndex = AccountsModel.Accounts.IndexOf(selectedAccount);
 
@@ -76,8 +81,8 @@ public class AccountController : ControllerBase
         return Ok($"Full account updated successfully.");
     }
     
-    //I am using the [FromBody] attribute here because otherwise it is expected as a parameter in Insomnia rather than in the body of the request. And to stay consistent 
-    //I am using the body as input here as well.
+    //I am using the [FromBody] attribute here because otherwise it is expected as a parameter in Insomnia rather than in the body of the request.
+    //And to stay consistent I am using the body as input here as well.
     [HttpPatch("{givenID:int}")]
     public async Task<IActionResult> UpdateEmailAddress(int givenID, [FromBody]string newEmail)
     {
@@ -85,7 +90,8 @@ public class AccountController : ControllerBase
         if (selectedAccount == null)
             return NotFound($"Account with ID: {givenID} not found.");
         
-        if(!Utilities.Email.IsValidEmail(newEmail))
+        var validationResult = Utilities.EmailValidation.IsValidEmail(newEmail);
+        if(!validationResult.IsValid)
             return BadRequest($"Invalid email address: {newEmail}");
         
         selectedAccount.Email = newEmail;
