@@ -23,27 +23,17 @@ public class AccountController : ControllerBase
         if(account == null)
             return BadRequest("Account data is null.");
         
-        
         //Check if ID already exists
         Account existingAccount = AccountsModel.Accounts.FirstOrDefault(a => a.Id == account.Id);
         if(existingAccount != null)
             return BadRequest($"Account with ID: {account.Id} already exists.");
         
-        //validate email address. I can either use the MailAddress class purely to check if it is a valid format
-        //or replace the EmailAddress property in the Account class with the class instance
-        //since there are some variables in the class that might need to be accessed. still null.
-        // try
-        // {
-        //     MailAddress mailAddress = new MailAddress(account.Email);
-        // }
-        // catch (FormatException)
-        // {
-        //     return BadRequest("Invalid email address format.");
-        // }
+        if(!Utilities.Email.IsValidEmail(account.Email))
+            return BadRequest($"Invalid email address: {account.Email}");
         
-        //validate phone number
+        //TODO validate phone number
         
-        //password validation
+        //TODO password validation
         
         AccountsModel.Accounts.Add(account);
         
@@ -76,6 +66,9 @@ public class AccountController : ControllerBase
         if(selectedAccount == null)
             return NotFound($"Account with ID: {givenID} not found.");
         
+        if(!Utilities.Email.IsValidEmail(newAccountData.Email))
+            return BadRequest($"Invalid email address: {newAccountData.Email}");
+        
         int selectedAccountIndex = AccountsModel.Accounts.IndexOf(selectedAccount);
 
         AccountsModel.Accounts[selectedAccountIndex] = newAccountData;
@@ -91,6 +84,9 @@ public class AccountController : ControllerBase
         Account selectedAccount = AccountsModel.Accounts.FirstOrDefault(a => a.Id == givenID);
         if (selectedAccount == null)
             return NotFound($"Account with ID: {givenID} not found.");
+        
+        if(!Utilities.Email.IsValidEmail(newEmail))
+            return BadRequest($"Invalid email address: {newEmail}");
         
         selectedAccount.Email = newEmail;
     

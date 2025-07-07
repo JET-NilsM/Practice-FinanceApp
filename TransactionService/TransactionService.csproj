@@ -14,4 +14,8 @@
       <Compile Remove="Models\PhoneNumber.cs" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Tests\Integration Tests\" />
+    </ItemGroup>
+
 </Project>
