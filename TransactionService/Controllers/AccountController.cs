@@ -74,23 +74,9 @@ public class AccountController : ControllerBase
         return Ok($"Full account updated successfully.");
     }
     
-    //Can't use the same method name with Account as parameter, because it would conflict with the previous method.
-    //but using object works which is the approach anyway since we only want to update specific properties?
-    //whereas with receiving Account all properties would have to be set
-    //{
-    //   "field": "value",
-    //   "field2": "value2
-    //}
-    // { }
-    // { }
-    //
-    //
     [HttpPatch("{givenID:int}")]
     public async Task<IActionResult> UpdateAccount(int givenID, Dictionary<string, object> newData)
     {
-        //check if the data is the data we expect, and only update the properties that have to be updated
-        //check if it works with same method names and different HTTP methods
-        
         // TODO: add validation for the newData dictionary to ensure it contains valid keys and values.
         
         
@@ -112,11 +98,18 @@ public class AccountController : ControllerBase
         //     var propertyValue = Convert.ChangeType(dataEntry.Value, property.PropertyType);
         //     property.SetValue(selectedAccount, propertyValue);
         // }
+
+        string allDictionaryContents = "";
+        foreach (var dataEntry in newData)
+        {
+            if (dataEntry.Key == "email")
+            {
+                selectedAccount.Email = dataEntry.Value.ToString();
+            }
+            allDictionaryContents += $"{dataEntry.Key}: {dataEntry.Value}\n";
+        }
         
-        
-        
-        //encapsulate in factory 
-        return Ok($"Account with ID: {givenID} updated successfully.");
+        return Ok($"Account with ID: {givenID} updated successfully. Dictionary content: {allDictionaryContents}");
     }
 
     [HttpDelete("{id:int}")]
