@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Net.Mail;
 using Microsoft.AspNetCore.Mvc;
 using TransactionService.Models;
+using TransactionService.Utilities;
 using Xunit.Sdk;
 
 namespace TransactionService.Controllers;
@@ -28,14 +29,10 @@ public class AccountController : ControllerBase
         Account existingAccount = AccountsModel.Accounts.FirstOrDefault(a => a.Id == account.Id);
         if(existingAccount != null)
             return BadRequest($"Account with ID: {account.Id} already exists.");
-
-        var emailValidationResult = Utilities.EmailValidation.IsValidEmail(account.Email);
-        if(!emailValidationResult.IsValid)
-            return BadRequest($"{emailValidationResult.Message}");
         
-        var phoneNumberValidationResult = Utilities.PhoneValidation.IsValidPhoneNumber(account.PhoneNumber);
-        if(!phoneNumberValidationResult.IsValid) 
-            return BadRequest($"{phoneNumberValidationResult.Message}");
+        // var phoneNumberValidationResult = Utilities.PhoneValidation.IsValidPhoneNumber(account.PhoneNumber);
+        // if(!phoneNumberValidationResult.IsValid) 
+        //     return BadRequest($"{phoneNumberValidationResult.Message}");
         
         //TODO password validation and hashing, out of scope for now.
         
@@ -70,10 +67,6 @@ public class AccountController : ControllerBase
         if(selectedAccount == null)
             return NotFound($"Account with ID: {givenID} not found.");
         
-        var validationResult = Utilities.EmailValidation.IsValidEmail(newAccountData.Email);
-        if(!validationResult.IsValid)
-            return BadRequest("Invalid email address: {newAccountData.Email}");
-        
         int selectedAccountIndex = AccountsModel.Accounts.IndexOf(selectedAccount);
 
         AccountsModel.Accounts[selectedAccountIndex] = newAccountData;
@@ -81,25 +74,49 @@ public class AccountController : ControllerBase
         return Ok($"Full account updated successfully.");
     }
     
-    //I am using the [FromBody] attribute here because otherwise it is expected as a parameter in Insomnia rather than in the body of the request.
-    //And to stay consistent I am using the body as input here as well.
+    //Can't use the same method name with Account as parameter, because it would conflict with the previous method.
+    //but using object works which is the approach anyway since we only want to update specific properties?
+    //whereas with receiving Account all properties would have to be set
+    //{
+    //   "field": "value",
+    //   "field2": "value2
+    //}
+    // { }
+    // { }
+    //
+    //
     [HttpPatch("{givenID:int}")]
-    public async Task<IActionResult> UpdateEmailAddress(int givenID, string newEmail)
+    public async Task<IActionResult> UpdateAccount(int givenID, Dictionary<string, object> newData)
     {
-        //check if the data is the data we expect, and only update the proprties that have to be updated
+        //check if the data is the data we expect, and only update the properties that have to be updated
         //check if it works with same method names and different HTTP methods
+        
+        // TODO: add validation for the newData dictionary to ensure it contains valid keys and values.
+        
         
         Account selectedAccount = AccountsModel.Accounts.FirstOrDefault(a => a.Id == givenID);
         if (selectedAccount == null)
             return NotFound($"Account with ID: {givenID} not found.");
-        
-        var validationResult = Utilities.EmailValidation.IsValidEmail(newEmail);
-        if(!validationResult.IsValid)
-            return BadRequest($"Invalid email address: {newEmail}");
-        
-        selectedAccount.Email = newEmail;
     
-        return Ok($"Email address updated to {newEmail} successfully.");
+        if(!newData.Any())
+            return BadRequest("No data provided for update.");
+
+        // var accountType = typeof(Account);
+        // foreach (KeyValuePair<string, object> dataEntry in newData)
+        // {
+        //     //Figures out what type the property is like string, int, etc.
+        //     var property = accountType.GetProperty(dataEntry.Key);
+        //     if (property == null)
+        //         continue;
+        //     
+        //     var propertyValue = Convert.ChangeType(dataEntry.Value, property.PropertyType);
+        //     property.SetValue(selectedAccount, propertyValue);
+        // }
+        
+        
+        
+        //encapsulate in factory 
+        return Ok($"Account with ID: {givenID} updated successfully.");
     }
 
     [HttpDelete("{id:int}")]

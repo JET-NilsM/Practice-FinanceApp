@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using TransactionService.Utilities;
 
 namespace TransactionService.Models;
 
@@ -9,8 +10,7 @@ public class Account
     public required int Id { get; set; }
     public required string FullName { get; set; }
     
-    [Required]
-    [EmailAddress]
+    [EmailValidation]
     public string Email { get; set; }
     
     public required string Password { get; set; }
