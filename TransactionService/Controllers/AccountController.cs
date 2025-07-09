@@ -20,6 +20,9 @@ public class AccountController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateAccount(Account account)
     {
+        if (!ModelState.IsValid)
+            return BadRequest("Invalid account data provided.");
+        
         //Name "empty" check is not necessary since the FullName property is required in the Account model,
         //It could be checked whether the name is valid but that is probably not necessary for now
         if(account == null)
@@ -29,14 +32,27 @@ public class AccountController : ControllerBase
         Account existingAccount = AccountsModel.Accounts.FirstOrDefault(a => a.Id == account.Id);
         if(existingAccount != null)
             return BadRequest($"Account with ID: {account.Id} already exists.");
+
+        Account newAccount;
+        try
+        {
+            newAccount = new Account()
+            {
+                Id = account.Id,
+                FullName = account.FullName,
+                Email = account.Email,
+                Password = account.Password,
+                PhoneNumber = account.PhoneNumber,
+                AccountBalance = account.AccountBalance,
+                AccountType = account.AccountType
+            };
+        }
+        catch (Exception e)
+        {
+            return BadRequest("Invalid account data provided.");
+        }
         
-        // var phoneNumberValidationResult = Utilities.PhoneValidation.IsValidPhoneNumber(account.PhoneNumber);
-        // if(!phoneNumberValidationResult.IsValid) 
-        //     return BadRequest($"{phoneNumberValidationResult.Message}");
-        
-        //TODO password validation and hashing, out of scope for now.
-        
-        AccountsModel.Accounts.Add(account);
+        AccountsModel.Accounts.Add(newAccount);
         
         return Ok("Account created successfully.");
     }
@@ -100,12 +116,36 @@ public class AccountController : ControllerBase
         // }
 
         string allDictionaryContents = "";
+        var accountType = typeof(Account);
+        
         foreach (var dataEntry in newData)
         {
-            if (dataEntry.Key == "email")
+            // var property = accountType.GetProperty(dataEntry.Key);
+            // if (property == null)
+            // {
+            //     
+            // }
+            //
+            // var convertedValue = Convert.ChangeType(dataEntry.Value, );
+
+            try
             {
-                selectedAccount.Email = dataEntry.Value.ToString();
+                if (dataEntry.Key == "email")
+                {
+                    selectedAccount.Email = dataEntry.Value.ToString();
+                }
             }
+            catch (FormatException)
+            {
+                return BadRequest($"Invalid email: {dataEntry.Value}");
+            }
+
+            if (dataEntry.Key == "fullName")
+            {
+                selectedAccount.FullName = dataEntry.Value.ToString();
+            }
+            
+            //Just for debugging to check if the dictionary is being processed correctly from Insomnia > controller
             allDictionaryContents += $"{dataEntry.Key}: {dataEntry.Value}\n";
         }
         

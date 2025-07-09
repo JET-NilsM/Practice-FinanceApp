@@ -11,7 +11,8 @@ public class Account
     public required string FullName { get; set; }
     
     [EmailValidation]
-    public string Email { get; set; }
+    [Required]
+    public required string Email { get; set; }
     
     public required string Password { get; set; }
     [Phone]

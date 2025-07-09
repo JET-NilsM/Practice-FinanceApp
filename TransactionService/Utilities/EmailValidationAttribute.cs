@@ -4,7 +4,7 @@ namespace TransactionService.Utilities;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter,
     AllowMultiple = false)]
-public class EmailValidationAttribute : DataTypeAttribute
+public class EmailValidationAttribute : ValidationAttribute
 {
     private static List<string> _domainWhitelist = new List<string>
     {
@@ -14,45 +14,38 @@ public class EmailValidationAttribute : DataTypeAttribute
         "hotmail.com",
         "live.com"
     };
-    
-    //Convert to primary constructor? 
-    public EmailValidationAttribute() : base(DataType.EmailAddress)
-    {
-    }
 
-    public override bool IsValid(object? value)
+    protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
     {
         if (value == null)
         {
-            return false;
+            return new ValidationResult("Value cannot be null");
         }
-        
+
         if (!(value is string valueAsString))
         {
-            return false;
+            return new ValidationResult("Value is not a string");
         }
         
         if (valueAsString.AsSpan().ContainsAny('\r', '\n'))
         {
-            return false;
+            return new ValidationResult("Value contains linebreaks");
         }
         
-        int index = valueAsString.IndexOf('@');
+        int atIndex = valueAsString.IndexOf('@');
         
-        if (index < 0 || 
-            index == valueAsString.Length - 1 ||
-            index != valueAsString.LastIndexOf('@'))
+        if (atIndex < 0 || 
+            atIndex == valueAsString.Length - 1 ||
+            atIndex != valueAsString.LastIndexOf('@'))
         {
-            return false;
-        }
-        
-        if (!_domainWhitelist.Any(ending => 
-                valueAsString.AsSpan(index + 1)
-                .EndsWith(ending.AsSpan(), StringComparison.OrdinalIgnoreCase)))
-        {
-            return false;
+            return new ValidationResult("Value format is invalid");
         }
 
-        return true;
+        if (!_domainWhitelist.Contains(valueAsString.Substring(atIndex + 1)))
+        {
+            return new ValidationResult("Provided domain is not whitelisted.");
+        }        
+
+        return ValidationResult.Success;
     }
 }

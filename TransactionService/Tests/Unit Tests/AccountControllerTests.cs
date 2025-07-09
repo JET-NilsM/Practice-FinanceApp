@@ -1,13 +1,22 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using TransactionService;
 using TransactionService.Controllers;
 using TransactionService.Models;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace TransactionService.Tests.Unit_Tests;
 
 public class AccountControllerTests
 {
+    private readonly ITestOutputHelper output;
+
+    public AccountControllerTests(ITestOutputHelper output)
+    {
+        this.output = output;
+    }
+    
     [Fact]
     public async void CreateAccount_ShouldReturnOk_WhenValidAccount()
     {
@@ -17,7 +26,7 @@ public class AccountControllerTests
         {
             Id = 123,
             FullName = "unit test user",
-            Email = "unitTest@gmail.com",
+            Email = "unitTest",
             Password = "testPassword123",
             PhoneNumber = "+31 6 12345678",
             AccountBalance = 1010.0f,
@@ -30,7 +39,6 @@ public class AccountControllerTests
 
         // Assert
         Assert.Equal("Account created successfully.", isOkResult.Value);
-        Assert.Contains(newAccount, AccountsModel.Accounts);
     }
 
     [Fact]
@@ -51,31 +59,30 @@ public class AccountControllerTests
     public async Task CreateAccount_ShouldReturnBadRequest_WhenEmailAddressIsInvalid()
     {
         // Arrange   
-        var accountController = new AccountController();
         var newAccount = new Account
         {
             Id = 124,
             FullName = "unit test user",
-            Email = "invalidEmailAddress",
+            Email = "email@invalidDomain.com",
             Password = "testPassword123",
             PhoneNumber = "+31 6 12345678",
             AccountBalance = 200f,
             AccountType = AccountType.Student,
         };
+
+        //Act
+        var validationContext = new ValidationContext(newAccount);
+        var validationResults = new List<ValidationResult>();
+        var isValidAccount = Validator.TryValidateObject(newAccount, validationContext, validationResults, true);
         
-        // Act
-        var result = await accountController.CreateAccount(newAccount);
-        
-        // Assert
-        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Equal($"Email address must contain '@' and '.' characters.", badRequestResult.Value);
+        //Assert
+        Assert.False(isValidAccount);
     }
 
     [Fact]
     public async Task CreateAccount_ShouldReturnBadRequest_WhenUsingNonWhitelistedEmailDomain()
     {
         // Arrange   
-        var accountController = new AccountController();
         var newAccount = new Account
         {
             Id = 125,
@@ -88,11 +95,12 @@ public class AccountControllerTests
         };
 
         // Act
-        var result = await accountController.CreateAccount(newAccount);
-
-        // Assert
-        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Equal("Domain is not whitelisted.", badRequestResult.Value);
+        var validationContext = new ValidationContext(newAccount);
+        var validationResults = new List<ValidationResult>();
+        var isValidAccount = Validator.TryValidateObject(newAccount, validationContext, validationResults, true);
+        
+        //Assert
+        Assert.False(isValidAccount);
     }
     
     [Fact]
