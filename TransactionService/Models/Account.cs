@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using TransactionService.Utilities;
 
 namespace TransactionService.Models;

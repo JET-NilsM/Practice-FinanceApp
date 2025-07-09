@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Net.Mail;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using TransactionService.Models;
 using TransactionService.Utilities;
@@ -103,50 +104,48 @@ public class AccountController : ControllerBase
         if(!newData.Any())
             return BadRequest("No data provided for update.");
 
-        // var accountType = typeof(Account);
-        // foreach (KeyValuePair<string, object> dataEntry in newData)
-        // {
-        //     //Figures out what type the property is like string, int, etc.
-        //     var property = accountType.GetProperty(dataEntry.Key);
-        //     if (property == null)
-        //         continue;
-        //     
-        //     var propertyValue = Convert.ChangeType(dataEntry.Value, property.PropertyType);
-        //     property.SetValue(selectedAccount, propertyValue);
-        // }
-
         string allDictionaryContents = "";
         var accountType = typeof(Account);
         
         foreach (var dataEntry in newData)
         {
-            // var property = accountType.GetProperty(dataEntry.Key);
-            // if (property == null)
-            // {
-            //     
-            // }
-            //
-            // var convertedValue = Convert.ChangeType(dataEntry.Value, );
-
             try
             {
-                if (dataEntry.Key == "email")
+                var property = accountType.GetProperty(dataEntry.Key);
+                if (property == null || !property.CanWrite)
                 {
-                    selectedAccount.Email = dataEntry.Value.ToString();
+                    continue;
                 }
+
+                object convertedValue;
+                var targetType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+                if (dataEntry.Value is JsonElement jsonElement)
+                {
+                    object? rawValue = jsonElement.ValueKind switch
+                    {
+                        JsonValueKind.String => jsonElement.GetString(),
+                        JsonValueKind.Number => targetType == typeof(int),
+                        JsonValueKind.True => true,
+                        JsonValueKind.False => false,
+                        _ => null
+                    };
+                    convertedValue = Convert.ChangeType(rawValue, targetType);
+                }
+                else
+                {
+                    convertedValue = Convert.ChangeType(dataEntry.Value, targetType);
+                }
+                
+                Console.WriteLine($"Value: {convertedValue}");
+                property.SetValue(selectedAccount, convertedValue);
+            
+                //Just for debugging to check if the dictionary is being processed correctly from Insomnia > controller
+                allDictionaryContents += $"{dataEntry.Key}: {convertedValue}\n";
             }
             catch (FormatException)
             {
                 return BadRequest($"Invalid email: {dataEntry.Value}");
             }
-
-            if (dataEntry.Key == "fullName")
-            {
-                selectedAccount.FullName = dataEntry.Value.ToString();
-            }
-            
-            //Just for debugging to check if the dictionary is being processed correctly from Insomnia > controller
-            allDictionaryContents += $"{dataEntry.Key}: {dataEntry.Value}\n";
         }
         
         return Ok($"Account with ID: {givenID} updated successfully. Dictionary content: {allDictionaryContents}");
