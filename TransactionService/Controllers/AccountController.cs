@@ -95,8 +95,6 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> UpdateAccount(int givenID, Dictionary<string, object> newData)
     {
         // TODO: add validation for the newData dictionary to ensure it contains valid keys and values.
-        
-        
         Account selectedAccount = AccountsModel.Accounts.FirstOrDefault(a => a.Id == givenID);
         if (selectedAccount == null)
             return NotFound($"Account with ID: {givenID} not found.");
@@ -148,7 +146,7 @@ public class AccountController : ControllerBase
             }
         }
         
-        return Ok($"Account with ID: {givenID} updated successfully. Dictionary content: {allDictionaryContents}");
+        return Ok($"Account with ID: {givenID} updated successfully. New data: {allDictionaryContents}");
     }
 
     [HttpDelete("{id:int}")]
