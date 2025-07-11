@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TransactionService.Data;
+using TransactionService.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
 
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddDbContext<FinanceContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("FinanceDatabase")));
 
