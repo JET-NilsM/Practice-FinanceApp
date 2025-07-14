@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using TransactionService;
 using TransactionService.Controllers;
 using TransactionService.Models;
@@ -19,7 +20,7 @@ public class AccountControllerTests
         this.output = output;
     }
     
-    [Fact]
+    [Fact] //ok
     public async void CreateAccount_ShouldReturnOk_WhenValidAccount()
     {
         // Arrange
@@ -29,7 +30,7 @@ public class AccountControllerTests
         {
             Id = 123,
             FullName = "unit test user",
-            Email = "unitTest",
+            Email = "unitTest@gmail.com",
             Password = "testPassword123",
             PhoneNumber = "+31 6 12345678",
             AccountBalance = 1010.0f,
@@ -37,6 +38,7 @@ public class AccountControllerTests
         };
 
         // Act
+        ValidateModel(newAccount, accountController.ModelState);
         var result = await accountController.CreateAccount(newAccount);
         var isOkResult = Assert.IsType<OkObjectResult>(result);
 
@@ -44,8 +46,8 @@ public class AccountControllerTests
         Assert.Equal("Account created successfully.", isOkResult.Value);
     }
     
-    [Fact]
-    public async void CreateAccount_ShouldReturnBadRequest_WhenAccountAlreadyExists()
+    [Fact] //ok
+    public async void CreateAccount_ShouldReturnBadRequest_WhenIdAlreadyExists()
     {
         // Arrange
         var mockRepo = new Mock<IAccountRepository>();
@@ -69,7 +71,7 @@ public class AccountControllerTests
         Assert.Equal("Account with ID: 1 already exists.", badRequestResult.Value);
     }
 
-    [Fact]
+    [Fact] //ok
     public async Task CreateAccount_ShouldReturnBadRequest_WhenAccountIsNull()
     {
         // Arrange
@@ -84,7 +86,7 @@ public class AccountControllerTests
         Assert.Equal("Account data is null.", badRequestResult.Value);
     }
 
-    [Fact]
+    [Fact] // ok
     public async void GetExistingAccounts_ShouldReturnOk()
     {
         // Arrange
@@ -99,8 +101,8 @@ public class AccountControllerTests
         Assert.Equal(okResult.Value.GetType(), typeof(List<Account>));
     }
 
-    [Fact]
-    public async void GetAccount_ShouldReturnBadRequest_WhenAccountIsNull()
+    [Fact] //ok
+    public async void GetAccount_ShouldReturnBadRequest_WhenAccountDoesNotExist()
     {
         // Arrange
         var mockRepo = new Mock<IAccountRepository>();
@@ -114,7 +116,7 @@ public class AccountControllerTests
         Assert.Equal("Account with ID: -1 not found.", notFoundResult.Value);
     }
     
-    [Fact]
+    [Fact] //ok
     public async void GetAccount_ShouldReturnOk_WhenAccountExists()
     {
         // Arrange
@@ -129,7 +131,7 @@ public class AccountControllerTests
         Assert.IsType<Account>(okResult.Value);
     }
 
-    [Fact]
+    [Fact] //ok
     public async Task NewAccount_ShouldReturnBadRequest_WhenEmailAddressIsInvalid()
     {
         // Arrange   
@@ -147,15 +149,7 @@ public class AccountControllerTests
         };
 
         //Act - testing both attribute validation and CRUD operation
-        var validationResults = ValidateModel(newAccount);
-        foreach (var validationResult in validationResults)
-        {
-            accountController.ModelState.AddModelError(
-                validationResult.MemberNames.FirstOrDefault() ?? "Email",
-                validationResult.ErrorMessage
-            );
-        }
-        
+        ValidateModel(newAccount, accountController.ModelState);
         var result = await accountController.CreateAccount(newAccount);
         
         //Assert
@@ -163,7 +157,7 @@ public class AccountControllerTests
         Assert.Equal("Invalid account data provided.", updatedResult.Value);
     }
 
-    [Fact]
+    [Fact] //ok
     public async Task NewAccount_ShouldReturnBadRequest_WhenUsingNonWhitelistedEmailDomain()
     {
         // Arrange   
@@ -181,15 +175,7 @@ public class AccountControllerTests
         };
 
         // Act
-        var validationResults = ValidateModel(newAccount);
-        foreach (var validationResult in validationResults)
-        {
-            accountController.ModelState.AddModelError(
-                validationResult.MemberNames.FirstOrDefault() ?? "Email",
-                validationResult.ErrorMessage
-            );
-        }
-
+        ValidateModel(newAccount, accountController.ModelState);
         var result = await accountController.CreateAccount(newAccount);     
                                                                     
         //Assert                                                            
@@ -197,7 +183,7 @@ public class AccountControllerTests
         Assert.Equal("Invalid account data provided.", updatedResult.Value);
     }
     
-    [Fact]
+    [Fact] //ok
     public async Task UpdateAccount_ShouldReturnNotFound_WhenAccountDoesNotExist()
     {
         // Arrange
@@ -213,16 +199,18 @@ public class AccountControllerTests
             AccountBalance = 500f,
             AccountType = AccountType.Student,
         };
+
+        var chosenAccountID = -1;
         
         // Act
-        var result = await accountController.UpdateAccount(-1, newData);
+        var result = await accountController.UpdateAccount(chosenAccountID, newData);
         
         // Assert
         var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
         Assert.Equal("Account with ID: -1 not found.", notFoundResult.Value);
     }
     
-    [Fact]
+    [Fact] //ok
     public async Task UpdateAccount_ShouldReturnBadRequest_WhenUsingEmptyData()
     {
         // Arrange   
@@ -230,10 +218,14 @@ public class AccountControllerTests
         var controller = new AccountController(mockRepo.Object);
         
         // Act
-        var  result = await controller.UpdateAccount(1, new Dictionary<string, object>());
+        var  result = await controller.UpdateAccount(1, new Dictionary<string, object>()
+        {
+            
+        });
         
         //Assert
-        Assert.Equal("No data provided for update.", ((BadRequestObjectResult)result).Value);
+        var updatedResult = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Equal("No data provided for update.", updatedResult.Value);
     }
 
     [Fact]
@@ -261,33 +253,20 @@ public class AccountControllerTests
         // Arrange
         var mockRepo = new Mock<IAccountRepository>();
         var accountController = new AccountController(mockRepo.Object);
-        Account newAccount = new Account
-        {
-            Id = 126,
-            FullName = "unit test user",
-            Email = "test@gmail.com",
-            PhoneNumber = "+31 6 12345678",
-            Password = "testPassword123",
-            AccountBalance = 500f,
-            AccountType = AccountType.Student,
-        };
         
         // Act
-        var result = await accountController.DeleteAccount(newAccount.Id);
+        var result = await accountController.DeleteAccount(2);
         
         // Assert
         var notFoundResult = Assert.IsType<OkObjectResult>(result);
         Assert.Equal($"Account deleted successfully.", notFoundResult.Value);
     }
     
-    [Fact]
+    [Fact] //ok
     public async Task DeleteAccount_ShouldReturnNotFound_WhenAccountDoesNotExist()
     {
         // Arrange
         var mockRepo = new Mock<IAccountRepository>();
-        mockRepo.Setup(repo => 
-            repo.DeleteAccount(It.IsAny<int>()))
-            .Throws(new KeyNotFoundException("Account with ID: -1 not found."));
         var accountController = new AccountController(mockRepo.Object);
         
         // Act
@@ -298,11 +277,17 @@ public class AccountControllerTests
         Assert.Equal("Account with ID: -1 not found.", notFoundResult.Value);
     }
 
-    private List<ValidationResult> ValidateModel(Account accountModel)
+    private void ValidateModel(Account accountModel, ModelStateDictionary modelState)
     {
         var validationResults = new List<ValidationResult>();
         var validationContext = new ValidationContext(accountModel, null, null);
         Validator.TryValidateObject(accountModel, validationContext, validationResults, true);
-        return validationResults;
+        foreach (var validationResult in validationResults)
+        {
+            modelState.AddModelError(
+                validationResult.MemberNames.FirstOrDefault() ?? "Email",
+                validationResult.ErrorMessage
+            );
+        }
     }
 }

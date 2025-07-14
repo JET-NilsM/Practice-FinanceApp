@@ -116,18 +116,11 @@ public class AccountController : ControllerBase
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteAccount(int id)
     {
-        try
-        {
-            _repo.DeleteAccount(id);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        Account selectedAccount = AccountsModel.Accounts.Where(account => account.Id == id).FirstOrDefault();
+        if (selectedAccount == null)
+            return NotFound($"Account with ID: {id} not found.");
+
+        AccountsModel.Accounts.Remove(selectedAccount);
 
         return Ok("Account deleted successfully.");
     }
