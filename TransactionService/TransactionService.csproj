@@ -25,6 +25,10 @@
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
     </ItemGroup>
+    
+    <ItemGroup>
+        <InternalsVisibleTo Include="TransactionServiceTests" />
+    </ItemGroup>
 
     <ItemGroup>
       <Compile Remove="Models\PhoneNumber.cs" />
