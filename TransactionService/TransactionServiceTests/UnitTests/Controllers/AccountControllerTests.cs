@@ -9,7 +9,7 @@ using Xunit.Abstractions;
 using Moq;
 using TransactionService.Repositories;
 
-namespace TransactionService.Tests.Unit_Tests;
+namespace TransactionServiceTests.UnitTests;
 
 public class AccountControllerTests
 {
