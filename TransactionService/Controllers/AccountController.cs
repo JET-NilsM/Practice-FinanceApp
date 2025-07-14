@@ -34,7 +34,7 @@ public class AccountController : ControllerBase
             return BadRequest("Account data is null.");
 
         //Check if ID already exists
-        Account existingAccount = AccountsModel.Accounts.FirstOrDefault(a => a.Id == account.Id);
+        Account existingAccount = _repo.GetAccount(account.Id);
         if (existingAccount != null)
             return BadRequest($"Account with ID: {account.Id} already exists.");
 
@@ -57,7 +57,7 @@ public class AccountController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetAccount(int id)
     {
-        Account selectedAccount = AccountsModel.Accounts.FirstOrDefault(a => a.Id == id);
+        Account selectedAccount = _repo.GetAccount(id);
         if (selectedAccount == null)
             return NotFound($"Account with ID: {id} not found.");
 
@@ -67,22 +67,24 @@ public class AccountController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAccounts()
     {
-        if (AccountsModel.Accounts.Count == 0)
-            return NotFound("No accounts found");
+        List<Account> accounts = _repo.GetAccounts();
+        if (accounts == null)
+            return NotFound("Accounts collection does not exist");
 
-        return Ok(AccountsModel.Accounts);
+        if (accounts.Count == 0)
+            return NotFound("Accounts collection is empty.");
+
+        return Ok(accounts);
     }
 
     [HttpPut("{givenID:int}")]
     public async Task<IActionResult> UpdateAccount(int givenID, Account newAccountData)
     {
-        Account selectedAccount = AccountsModel.Accounts.Where(account => account.Id == givenID).FirstOrDefault();
+        Account selectedAccount = _repo.GetAccount(givenID);
         if (selectedAccount == null)
             return NotFound($"Account with ID: {givenID} not found.");
 
-        int selectedAccountIndex = AccountsModel.Accounts.IndexOf(selectedAccount);
-
-        AccountsModel.Accounts[selectedAccountIndex] = newAccountData;
+        _repo.UpdateAccount(givenID, newAccountData);
 
         return Ok($"Full account updated successfully.");
     }
@@ -90,7 +92,7 @@ public class AccountController : ControllerBase
     [HttpPatch("{givenID:int}")]
     public async Task<IActionResult> UpdateAccount(int givenID, Dictionary<string, object> newData)
     {
-        Account selectedAccount = AccountsModel.Accounts.FirstOrDefault(a => a.Id == givenID);
+        Account selectedAccount = _repo.GetAccount(givenID);
         if (selectedAccount == null)
             return NotFound($"Account with ID: {givenID} not found.");
 
@@ -116,11 +118,11 @@ public class AccountController : ControllerBase
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteAccount(int id)
     {
-        Account selectedAccount = AccountsModel.Accounts.Where(account => account.Id == id).FirstOrDefault();
+        Account selectedAccount = _repo.GetAccount(id);
         if (selectedAccount == null)
             return NotFound($"Account with ID: {id} not found.");
 
-        AccountsModel.Accounts.Remove(selectedAccount);
+        _repo.DeleteAccount(id);
 
         return Ok("Account deleted successfully.");
     }
