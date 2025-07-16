@@ -10,6 +10,7 @@
 
     <ItemGroup>
       <PackageReference Include="EntityFramework" Version="6.5.1" />
+      <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.7" />
       <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.7" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.7" />
@@ -36,6 +37,12 @@
 
     <ItemGroup>
       <Folder Include="Migrations\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\obj\TransactionServiceTests.csproj.nuget.dgspec.json" />
     </ItemGroup>
 
 </Project>

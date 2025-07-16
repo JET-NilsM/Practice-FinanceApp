@@ -7,12 +7,26 @@
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AMailAddress_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003F_002E_002E_003FLibrary_003FApplication_0020Support_003FJetBrains_003FRider2025_002E1_003Fresharper_002Dhost_003FSourcesCache_003F48ebae8dfa411a676daed55f6c153cf737e7e13f684ffefdcf3eefbd2f9ac1_003FMailAddress_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003ATransaction_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003F_002E_002E_003FLibrary_003FApplication_0020Support_003FJetBrains_003FRider2025_002E1_003Fresharper_002Dhost_003FDecompilerCache_003Fdecompiler_003F4c6d3deb2234422c9a2a7cdb0862a2386710_003F04_003F76dbad05_003FTransaction_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AValidationAttribute_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003F_002E_002E_003FLibrary_003FApplication_0020Support_003FJetBrains_003FRider2025_002E1_003Fresharper_002Dhost_003FSourcesCache_003Ff5379071e4f83fd6ca437fdb7b21f5d70eef8a11e147f8c0ca75523d742dd0_003FValidationAttribute_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AValidator_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003F_002E_002E_003FLibrary_003FApplication_0020Support_003FJetBrains_003FRider2025_002E1_003Fresharper_002Dhost_003FSourcesCache_003F56de12c561b3b4753be71e8c3af9866138e02180939a69a4e1b5cbb858251_003FValidator_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;
   &lt;Assembly Path="/Users/nils.meijer/.dotnet/packs/Microsoft.NETCore.App.Ref/9.0.6/ref/net9.0/System.Net.Mail.dll" /&gt;
 &lt;/AssemblyExplorer&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=5749fee1_002Dcd3a_002D4f1e_002Dbc8a_002Dc22d7cc9e002/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=5749fee1_002Dcd3a_002D4f1e_002Dbc8a_002Dc22d7cc9e002/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;Solution /&gt;
 &lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=772cf204_002D5a1f_002D43f2_002D9ef9_002D880de0ea288d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="GetAccounts_ReturnsOk" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::637D5B09-BF18-4B77-8B9F-3B20004E738B::net9.0::TransactionServiceTests.Integration_Tests.AccountControllerTests.GetAccounts_ReturnsOk&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::637D5B09-BF18-4B77-8B9F-3B20004E738B::net9.0::TransactionServiceTests.Integration_Tests.AccountControllerTests.CreateAccunt_ReturnsCreated&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::DF55E5A9-AE72-42BA-9F42-869E0D2729B1::net9.0::TransactionServiceTests.Integration_Tests.AccountControllerTests.CreateAccunt_ReturnsCreated&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=be90889c_002Df720_002D43f6_002Da2db_002D8d4ba8a5c016/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="NewAccount_ShouldReturnBadRequest_WhenEmailAddressIsInvalid" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::637D5B09-BF18-4B77-8B9F-3B20004E738B::net9.0::TransactionServiceTests.IntegrationTests.AccountControllerTests&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String>
+	
 	
 	
 	</wpf:ResourceDictionary>

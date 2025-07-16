@@ -8,7 +8,7 @@ public class Account
 {
     //Not created by the user but by the system using UUID like we discussed but not necessary for now.
     //Can just work with incrementing integers for now.
-    public required int Id { get; set; }
+    public int AccountID { get; set; }
     public required string FullName { get; set; }
     
     [EmailValidation]
