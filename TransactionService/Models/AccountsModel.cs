@@ -6,23 +6,35 @@ public class AccountsModel
     {
         new Account()
         {
-            AccountID = 1,
+            UserID = 1,
             FullName = "Nils Meijer",
             Email = "nils@gmail.com",
             Password = "password123",
             PhoneNumber =  "+31 6 12345678",
-            AccountBalance = 100.50f,
-            AccountType = AccountType.Student
+            Data = new List<AccountData>()
+            {
+                new AccountData()
+                {
+                    Balance = 100.0f,
+                    Type = AccountType.Student
+                }
+            }
         },
         new Account()
         {
-            AccountID = 2,
+            UserID = 2,
             FullName = "Test User",
             Email = "testUser@gmail.com",
             Password = "password567",
             PhoneNumber =  "+31 6 12345678",
-            AccountBalance = 2500.12f,
-            AccountType = AccountType.Student
+            Data = new List<AccountData>()
+            {
+                new AccountData()
+                {
+                    Balance = 100.0f,
+                    Type = AccountType.Student
+                }
+            }
         },
     };
 }

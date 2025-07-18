@@ -23,7 +23,7 @@ public class AccountControllerTests : IClassFixture<WebApplicationFactory<Progra
     }
 
     [Fact]
-    public async void CreateAccunt_ReturnsCreated()
+    public async Task CreateAccount_ReturnsCreated()
     {
         Account mewAccount = new Account
         {
@@ -31,16 +31,51 @@ public class AccountControllerTests : IClassFixture<WebApplicationFactory<Progra
             Email = "test@gmail.com",
             Password = "password123",
             PhoneNumber = "+31 6 12345678",
-            AccountBalance = 100.0f,
-            AccountType = AccountType.Student
+            Data = new List<AccountData>()
+            {
+                new AccountData()
+                {
+                    Balance = 100.0f,
+                    Type = AccountType.Student
+                }
+            }
         };
+        
+        var response = await _client.PostAsJsonAsync("/api/account", mewAccount);
+
+        response.EnsureSuccessStatusCode();
+        
+        var createdAccount = await response.Content.ReadFromJsonAsync<Account>();
+        
+        Assert.NotNull(createdAccount);
+        Assert.Equal(mewAccount.FullName, createdAccount.FullName);
     }
     
     
     //Duplicate ID should return badrequest
 
     //Invalid data (invalid email) should return badrequest
-
+    
+    [Fact]
+    public async Task GetAccountById_ReturnsOk()
+    {
+        var response = await _client.GetAsync("/api/account/1");
+        
+        response.EnsureSuccessStatusCode();
+        
+        var account = await response.Content.ReadFromJsonAsync<Account>();
+        
+        Assert.NotNull(account);
+        Assert.Equal("Nils Meijer", account.FullName);
+    }
+    
+    [Fact]
+    public async Task GetAccount_WhenDoesNotExist_ReturnsNotFound()
+    {
+        var response = await _client.GetAsync("/api/account/-1");
+        
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
+    }
 
     [Fact]
     public async Task GetAccounts_ReturnsOk()
@@ -54,18 +89,6 @@ public class AccountControllerTests : IClassFixture<WebApplicationFactory<Progra
         Assert.NotNull(accounts);
         Assert.Contains(accounts, a => a.FullName == "Nils Meijer");
     }
-    
-    
-    
-    //get account by id should return ok with account data
-
-    //get account by id should return notfound if account does not exist
-
-
-    //get all accounts should return ok with list of accounts
-
-    //get all accounts should return empty list if no accounts exist
-
 
     //put update account should return ok if account exists and is updated successfully
 

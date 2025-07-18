@@ -10,7 +10,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddDbContext<FinanceContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("TestDatabase")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("FinanceDatabase")));
 
 builder.Services.AddOpenApi();
 

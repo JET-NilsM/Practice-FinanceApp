@@ -35,6 +35,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
             db.Database.EnsureCreated();
             db.Accounts.RemoveRange(db.Accounts);
+            db.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('Accounts', RESEED, 0)");
 
             SeedDatabase(db);
         });
@@ -52,8 +53,14 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 Email = "test@gmail.com",
                 Password = "testpassword123",
                 PhoneNumber = "0612345678",
-                AccountBalance = 500.0f,
-                AccountType = AccountType.Student
+                Data = new List<AccountData>()
+                {
+                    new AccountData()
+                    {
+                        Balance = 100.0f,
+                        Type = AccountType.Student
+                    }
+                }
             },
             new Account()
             {
@@ -61,8 +68,14 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 Email = "test@gmail.com",
                 Password = "testpassword123",
                 PhoneNumber = "0612345678",
-                AccountBalance = 500.0f,
-                AccountType = AccountType.Student
+                Data = new List<AccountData>()
+                {
+                    new AccountData()
+                    {
+                        Balance = 200.0f,
+                        Type = AccountType.Youth
+                    }
+                }
             }
         });
 

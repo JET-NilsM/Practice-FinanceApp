@@ -34,19 +34,26 @@ public class AccountController : ControllerBase
             return BadRequest("Account data is null.");
 
         //Check if ID already exists
-        Account existingAccount = _repo.GetAccount(account.AccountID);
+        Account existingAccount = _repo.GetAccount(account.UserID);
         if (existingAccount != null)
-            return BadRequest($"Account with ID: {account.AccountID} already exists.");
+            return BadRequest($"Account with ID: {account.UserID} already exists.");
 
         Account newAccount = new Account()
         {
-            AccountID = account.AccountID,
+            UserID = account.UserID,
             FullName = account.FullName,
             Email = account.Email,
             Password = account.Password,
             PhoneNumber = account.PhoneNumber,
-            AccountBalance = account.AccountBalance,
-            AccountType = account.AccountType
+            Data = new List<AccountData>()
+            {
+                new AccountData()
+                {
+                    Account = account,
+                    Balance = account.Data?.FirstOrDefault()?.Balance ?? 0.0f, // Default to 0 if no balance is provided
+                    Type = account.Data?.FirstOrDefault()?.Type ?? AccountType.Student // Default to Student if no type is provided
+                }
+            }
         };
 
         _repo.AddAccount(newAccount);
