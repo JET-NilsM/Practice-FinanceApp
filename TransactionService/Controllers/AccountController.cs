@@ -34,13 +34,13 @@ public class AccountController : ControllerBase
             return BadRequest("Account data is null.");
 
         //Check if ID already exists
-        Account existingAccount = _repo.GetAccount(account.UserID);
+        Account existingAccount = _repo.GetAccount(account.ID);
         if (existingAccount != null)
-            return BadRequest($"Account with ID: {account.UserID} already exists.");
+            return BadRequest($"Account with ID: {account.ID} already exists.");
 
         Account newAccount = new Account()
         {
-            UserID = account.UserID,
+            ID = account.ID,
             FullName = account.FullName,
             Email = account.Email,
             Password = account.Password,

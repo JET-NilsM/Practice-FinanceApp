@@ -6,7 +6,7 @@ public class AccountsModel
     {
         new Account()
         {
-            UserID = 1,
+            ID = 1,
             FullName = "Nils Meijer",
             Email = "nils@gmail.com",
             Password = "password123",
@@ -22,7 +22,7 @@ public class AccountsModel
         },
         new Account()
         {
-            UserID = 2,
+            ID = 2,
             FullName = "Test User",
             Email = "testUser@gmail.com",
             Password = "password567",

@@ -23,17 +23,11 @@ namespace TransactionService.Migrations
 
             modelBuilder.Entity("TransactionService.Models.Account", b =>
                 {
-                    b.Property<int>("AccountID")
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AccountID"));
-
-                    b.Property<float>("AccountBalance")
-                        .HasColumnType("real");
-
-                    b.Property<int>("AccountType")
-                        .HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -51,9 +45,49 @@ namespace TransactionService.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("AccountID");
+                    b.HasKey("ID");
 
                     b.ToTable("Accounts");
+                });
+
+            modelBuilder.Entity("TransactionService.Models.AccountData", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("AccountID")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Balance")
+                        .HasColumnType("real");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("AccountID");
+
+                    b.ToTable("AccountData");
+                });
+
+            modelBuilder.Entity("TransactionService.Models.AccountData", b =>
+                {
+                    b.HasOne("TransactionService.Models.Account", "Account")
+                        .WithMany("Data")
+                        .HasForeignKey("AccountID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
+            modelBuilder.Entity("TransactionService.Models.Account", b =>
+                {
+                    b.Navigation("Data");
                 });
 #pragma warning restore 612, 618
         }

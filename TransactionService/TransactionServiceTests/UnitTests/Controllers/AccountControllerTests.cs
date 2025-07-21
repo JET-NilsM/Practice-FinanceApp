@@ -28,7 +28,7 @@ public class AccountControllerTests
         var accountController = new AccountController(mockRepo.Object);
         var newAccount = new Account
         {
-            UserID = 123,
+            ID = 123,
             FullName = "unit test user",
             Email = "unitTest@gmail.com",
             Password = "testPassword123",
@@ -43,7 +43,7 @@ public class AccountControllerTests
             }
         };
 
-        mockRepo.Setup(repo => repo.GetAccount(newAccount.UserID)).Returns((Account)null);
+        mockRepo.Setup(repo => repo.GetAccount(newAccount.ID)).Returns((Account)null);
 
         // Act
         ValidateModel(newAccount, accountController.ModelState);
@@ -62,7 +62,7 @@ public class AccountControllerTests
         var accountController = new AccountController(mockRepo.Object);
         var existingAccount = new Account
         {
-            UserID = 1,
+            ID = 1,
             FullName = "unit test user",
             Email = "unitTest@gmail.com",
             Password = "testPassword123",
@@ -79,7 +79,7 @@ public class AccountControllerTests
 
         //mental note: not calling mockRepo.Setup(repo => repo.AddAccount(existingAccount))
         //because the method should never be reached if the ID already exists.
-        mockRepo.Setup(repo => repo.GetAccount(existingAccount.UserID)).Returns(existingAccount);
+        mockRepo.Setup(repo => repo.GetAccount(existingAccount.ID)).Returns(existingAccount);
         
         // Act
         var result = await accountController.CreateAccount(existingAccount);
@@ -114,7 +114,7 @@ public class AccountControllerTests
         {
             new Account 
                 { 
-                    UserID = 1, 
+                    ID = 1, 
                     FullName = "Test", 
                     Email = "test@gmail.com", 
                     Password = "password123", 
@@ -164,7 +164,7 @@ public class AccountControllerTests
         var accountController = new AccountController(mockRepo.Object);
         mockRepo.Setup(repo => repo.GetAccount(1)).Returns(new Account
         {
-            UserID = 1,
+            ID = 1,
             FullName = "Test User",
             Email = "test@gmail.com",
             Password = "password123",
@@ -195,7 +195,7 @@ public class AccountControllerTests
         var accountController = new AccountController(mockRepo.Object);
         var newAccount = new Account
         {
-            UserID = 5,
+            ID = 5,
             FullName = "unit test user",
             Email = "invalidAddress",
             Password = "testPassword123",
@@ -230,7 +230,7 @@ public class AccountControllerTests
         var accountController = new AccountController(mockRepo.Object);
         var newAccount = new Account
         {
-            UserID = 125,
+            ID = 125,
             FullName = "unit test user",
             Email = "testUser@notWhitelisted.com",
             Password = "testPassword123",
@@ -265,7 +265,7 @@ public class AccountControllerTests
         var accountController = new AccountController(mockRepo.Object);
         var newData = new Account()
         {
-            UserID = 1,
+            ID = 1,
             FullName = "Updated User",
             Email = "test@gmail.com",
             Password = "newPassword123",
@@ -299,7 +299,7 @@ public class AccountControllerTests
         var controller = new AccountController(mockRepo.Object);
         var existingAccount = new Account()
         {
-            UserID = 1,
+            ID = 1,
             FullName = "Updated User",
             Email = "test@gmail.com",
             Password = "newPassword123",
@@ -314,7 +314,7 @@ public class AccountControllerTests
             }
         };
 
-        mockRepo.Setup(repo => repo.GetAccount(existingAccount.UserID)).Returns(existingAccount);
+        mockRepo.Setup(repo => repo.GetAccount(existingAccount.ID)).Returns(existingAccount);
         
         
         // Act
@@ -337,7 +337,7 @@ public class AccountControllerTests
         var accountController = new AccountController(mockRepo.Object);
         var existingAccount = new Account()
         {
-            UserID = 1,
+            ID = 1,
             FullName = "Updated User",
             Email = "test@gmail.com",
             Password = "newPassword123",
@@ -351,7 +351,7 @@ public class AccountControllerTests
                 }
             }
         };
-        mockRepo.Setup(repo => repo.GetAccount(existingAccount.UserID)).Returns(existingAccount);
+        mockRepo.Setup(repo => repo.GetAccount(existingAccount.ID)).Returns(existingAccount);
         
         Dictionary<string, object> newData = new Dictionary<string, object>
         {
@@ -374,7 +374,7 @@ public class AccountControllerTests
         var accountController = new AccountController(mockRepo.Object);
         var existingAccount = new Account
         {
-            UserID = 2,
+            ID = 2,
             FullName = "Test User",
             Email = "test@gmail.com",
             Password = "password123",
