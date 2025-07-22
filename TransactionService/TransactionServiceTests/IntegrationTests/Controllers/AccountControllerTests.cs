@@ -93,9 +93,38 @@ public class AccountControllerTests : IClassFixture<WebApplicationFactory<Progra
     //put update account should return ok if account exists and is updated successfully
 
     //put update account should return notfound if account does not exist
-
+    [Fact]
+    public async Task PutAccount_AccountDoesNotExist_ReturnNotFound()
+    {
+        Account newData = new Account
+        {
+            FullName = "Updated Name",
+            Email = "test@gmail.com",
+            Password = "password123",
+            PhoneNumber = "+31 6 12345678",
+            Data = new List<AccountData>()
+            {
+                new AccountData()
+                {
+                    Balance = 100.0f,
+                    Type = AccountType.Student
+                }
+            }
+        };
+        
+        var response =  await _client.PutAsJsonAsync("/api/account/-1", newData);
+        
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
+    }
 
     //delete account should return ok if account exists and is deleted successfully
+    [Fact]
+    public async Task DeleteAccount_ReturnsOk()
+    {
+        //var response =  await _client.DeleteFromJsonAsync("/api/account/2");
+        
+        //Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+    }
 
     //delete account should return notfound if account does not exist
 

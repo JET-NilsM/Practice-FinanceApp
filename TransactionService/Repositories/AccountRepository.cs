@@ -24,7 +24,10 @@ public class AccountRepository : IAccountRepository
 
     public Account GetAccount(int id)
     {
-        return _context.Accounts.Find(id);
+        Account account = _context.Accounts.Find(id);
+        if (account != null)
+            return account;
+        return null;
     }
     
     public void AddAccount(Account account)
