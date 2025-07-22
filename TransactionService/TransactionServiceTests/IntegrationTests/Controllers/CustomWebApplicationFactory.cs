@@ -36,6 +36,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             db.Database.EnsureCreated();
             db.Accounts.RemoveRange(db.Accounts);
             db.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('Accounts', RESEED, 0)");
+            db.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('AccountData', RESEED, 0)");
 
             SeedDatabase(db);
         });

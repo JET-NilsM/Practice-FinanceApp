@@ -25,7 +25,7 @@ public class AccountControllerTests : IClassFixture<WebApplicationFactory<Progra
     [Fact]
     public async Task CreateAccount_ReturnsCreated()
     {
-        Account mewAccount = new Account
+        Account newAccount = new Account
         {
             FullName = "John Doe",
             Email = "test@gmail.com",
@@ -41,14 +41,14 @@ public class AccountControllerTests : IClassFixture<WebApplicationFactory<Progra
             }
         };
         
-        var response = await _client.PostAsJsonAsync("/api/account", mewAccount);
+        var response = await _client.PostAsJsonAsync("/api/account", newAccount);
 
         response.EnsureSuccessStatusCode();
         
         var createdAccount = await response.Content.ReadFromJsonAsync<Account>();
         
         Assert.NotNull(createdAccount);
-        Assert.Equal(mewAccount.FullName, createdAccount.FullName);
+        Assert.Equal(newAccount.FullName, createdAccount.FullName);
     }
     
     

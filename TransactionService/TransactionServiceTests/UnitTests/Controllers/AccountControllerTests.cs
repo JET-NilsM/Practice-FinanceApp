@@ -48,10 +48,10 @@ public class AccountControllerTests
         // Act
         ValidateModel(newAccount, accountController.ModelState);
         var result = await accountController.CreateAccount(newAccount);
-        var isOkResult = Assert.IsType<OkObjectResult>(result);
+        var isOkResult = Assert.IsType<CreatedResult>(result);
 
         // Assert
-        Assert.Equal("Account created successfully.", isOkResult.Value);
+        Assert.Equal(newAccount.FullName, isOkResult.Value);
     }
     
     [Fact] 

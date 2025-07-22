@@ -58,7 +58,7 @@ public class AccountController : ControllerBase
 
         _repo.AddAccount(newAccount);
 
-        return Created("Account created successfully.", newAccount);
+        return Created("Account created successfully.", newAccount.FullName);
     }
 
     [HttpGet("{id:int}")]
