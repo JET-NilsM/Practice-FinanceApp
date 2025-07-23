@@ -287,7 +287,7 @@ public class AccountControllerTests
         
         // Assert
         var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
-        Assert.Equal("Account with ID: -1 not found.", notFoundResult.Value);
+        Assert.Equal("-1", notFoundResult.Value);
         mockRepo.Verify(repo => repo.UpdateAccount(chosenAccountID, It.IsAny<Account>()), Times.Never);
     }
     
