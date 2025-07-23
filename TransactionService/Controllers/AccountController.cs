@@ -124,7 +124,7 @@ public class AccountController : ControllerBase
             allDictionaryContents += $"{dataEntry.Key}: {convertedValue}\n";
         }
 
-        return Ok($"Account with ID: {givenID} updated successfully. New data: {allDictionaryContents}");
+        return Ok(selectedAccount);
     }
 
     [HttpDelete("{id:int}")]

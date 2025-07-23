@@ -12,7 +12,7 @@ public class Account
     [JsonPropertyName("id")] public int ID { get; set; }
     
     [JsonPropertyName("fullName")] public required string FullName { get; set; }
-    [Required] [JsonPropertyName("email")] public required string Email { get; set; }
+    [Required] [EmailValidation] [JsonPropertyName("email")] public required string Email { get; set; }
     [JsonPropertyName("password")] public required string Password { get; set; }
     [Phone] [JsonPropertyName("phoneNumber")] public string PhoneNumber { get; set; }
 
