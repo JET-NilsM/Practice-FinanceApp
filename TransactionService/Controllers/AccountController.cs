@@ -39,9 +39,9 @@ public class AccountController : ControllerBase
             return BadRequest("Account data is null.");
 
         //Check if ID already exists
-        Account existingAccount = _repo.GetAccount(account.ID);
-        if (existingAccount != null)
-            return BadRequest($"Account with ID: {account.ID} already exists.");
+        // Account existingAccount = _repo.GetAccount(account.ID);
+        // if (existingAccount != null)
+        //     return BadRequest($"Account with ID: {account.ID} already exists.");
 
         Account newAccount = new Account()
         {
@@ -71,7 +71,7 @@ public class AccountController : ControllerBase
     {
         Account selectedAccount = _repo.GetAccount(id);
         if (selectedAccount == null)
-            return NotFound($"Account with ID: {id} not found.");
+            return NotFound(id);
 
         return Ok(selectedAccount);
     }
@@ -94,7 +94,7 @@ public class AccountController : ControllerBase
     {
         Account selectedAccount = _repo.GetAccount(givenID);
         if (selectedAccount == null)
-            return NotFound($"Account with ID: {givenID} not found.");
+            return NotFound(givenID);
 
         _repo.UpdateAccount(givenID, newAccountData);
 
