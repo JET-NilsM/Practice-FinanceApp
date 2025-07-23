@@ -1,10 +1,13 @@
+using System.Text.Json.Serialization;
+
 namespace TransactionService.Models;
 
+[Serializable]
 public class AccountData
 {
-    public int ID { get; set; }
-    public int AccountID { get; set; }
-    public Account Account { get; set; }
-    public float Balance { get; set; }
-    public AccountType Type { get; set; }
+    [JsonPropertyName("id")] public int ID { get; set; }
+    [JsonPropertyName("accountID")] public int AccountID { get; set; }
+    [JsonPropertyName("account")] public Account Account { get; set; }
+    [JsonPropertyName("balance")] public float Balance { get; set; }
+    [JsonPropertyName("type")] public AccountType Type { get; set; }
 }
