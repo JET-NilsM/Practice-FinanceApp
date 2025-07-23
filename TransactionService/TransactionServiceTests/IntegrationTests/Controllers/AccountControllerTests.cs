@@ -117,7 +117,7 @@ public class AccountControllerTests : IClassFixture<WebApplicationFactory<Progra
         
         var response =  await _client.PutAsJsonAsync("/api/account/-1", newData);
         
-        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
     //delete account should return ok if account exists and is deleted successfully
@@ -126,7 +126,7 @@ public class AccountControllerTests : IClassFixture<WebApplicationFactory<Progra
     {
         var response =  await _client.DeleteAsync("/api/account/2");
         
-        Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     //delete account should return notfound if account does not exist
@@ -139,9 +139,54 @@ public class AccountControllerTests : IClassFixture<WebApplicationFactory<Progra
     }
 
     //patch account should return ok if account exists and is patched successfully
-    
-    
-    //patch account should return notfound if account does not exist
+    [Fact]
+    public async Task PatchAccount_ReturnsOk()
+    {
+        var patchData = new Dictionary<string, object>()
+        {
+            { "FullName", "Updated Name" },
+        };
+        
+        var json = JsonSerializer.Serialize(patchData);
+        var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await _client.PatchAsync("/api/account/1", stringContent);
+        
+        response.EnsureSuccessStatusCode();
+        
+        var returnedAccount = await response.Content.ReadFromJsonAsync<Account>();
+        
+        Assert.Equal(returnedAccount.FullName, returnedAccount.FullName);
+    }
 
+    //patch account should return notfound if account does not exist
+    [Fact]
+    public async Task? PatchAccount_AccountDoesNotExist_ReturnNotFound()
+    {
+        var patchData = new Dictionary<string, object>()
+        {
+            { "FullName", "Updated Name" },
+        };
+        
+        var json = JsonSerializer.Serialize(patchData);
+        var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await _client.PatchAsync("/api/account/-1", stringContent);
+        
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+    
     //patch account should return badrequest if patch data is invalid
+    [Fact]
+    public async Task PatchAccount_InvalidData_ReturnsBadRequest()
+    {
+        var patchData = new Dictionary<string, object>()
+        {
+            { "InvalidProperty", "Invalid Value" },
+        };
+        
+        var json = JsonSerializer.Serialize(patchData);
+        var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await _client.PatchAsync("/api/account/1", stringContent);
+        
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
 }
