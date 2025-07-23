@@ -1,4 +1,7 @@
+using System.Net;
 using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 using TransactionService.Models;
@@ -25,7 +28,7 @@ public class AccountControllerTests : IClassFixture<WebApplicationFactory<Progra
     [Fact]
     public async Task CreateAccount_ReturnsCreated()
     {
-        Account newAccount = new Account
+        Account newAccount = new Account()
         {
             FullName = "John Doe",
             Email = "test@gmail.com",
@@ -36,19 +39,19 @@ public class AccountControllerTests : IClassFixture<WebApplicationFactory<Progra
                 new AccountData()
                 {
                     Balance = 100.0f,
-                    Type = AccountType.Student
+                    Type = 0
                 }
             }
         };
         
-        var response = await _client.PostAsJsonAsync("/api/account", newAccount);
-
-        response.EnsureSuccessStatusCode();
         
-        var createdAccount = await response.Content.ReadFromJsonAsync<Account>();
+        var stringContent = new StringContent(JsonSerializer.Serialize(newAccount), Encoding.UTF8, "application/json");
+        HttpResponseMessage response = await _client.PostAsync("/api/account", stringContent);
         
-        Assert.NotNull(createdAccount);
-        Assert.Equal(newAccount.FullName, createdAccount.FullName);
+        var returnedAccount = await response.Content.ReadFromJsonAsync<Account>();
+        
+        Assert.NotNull(returnedAccount);
+        Assert.Equal(newAccount.FullName, returnedAccount.FullName);
     }
     
     
@@ -121,16 +124,23 @@ public class AccountControllerTests : IClassFixture<WebApplicationFactory<Progra
     [Fact]
     public async Task DeleteAccount_ReturnsOk()
     {
-        //var response =  await _client.DeleteFromJsonAsync("/api/account/2");
+        var response =  await _client.DeleteAsync("/api/account/2");
         
-        //Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
     }
 
     //delete account should return notfound if account does not exist
-
+    [Fact]
+    public async Task DeleteAccount_WhenDoesNotExist_ReturnsNotFound()
+    {
+        var response =  await _client.DeleteAsync("/api/account/-1");
+        
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
 
     //patch account should return ok if account exists and is patched successfully
-
+    
+    
     //patch account should return notfound if account does not exist
 
     //patch account should return badrequest if patch data is invalid

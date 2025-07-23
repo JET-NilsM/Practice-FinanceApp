@@ -26,7 +26,13 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> CreateAccount(Account account)
     {
         if (!ModelState.IsValid)
+        {
+            var errors = ModelState.Values.SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
+            
             return BadRequest("Invalid account data provided.");
+        }
 
         //Name "empty" check is not necessary since the FullName property is required in the Account model,
         //It could be checked whether the name is valid but that is probably not necessary for now
@@ -58,7 +64,7 @@ public class AccountController : ControllerBase
 
         _repo.AddAccount(newAccount);
 
-        return Created("Account created successfully.", newAccount.FullName);
+        return Created($"/api/account/{newAccount.ID}", newAccount);
     }
 
     [HttpGet("{id:int}")]
