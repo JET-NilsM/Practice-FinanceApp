@@ -16,51 +16,47 @@ public class AccountController : ControllerBase
 {
     private AccountsModel _accountsModel;
     private IAccountRepository _repo;
+    private readonly ILogger _logger;
 
-    public AccountController(IAccountRepository repo)
+    public AccountController(IAccountRepository repo, ILogger<AccountController> logger)
     {
         _repo = repo;
+        _logger = logger;
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateAccount(Account account)
+    public async Task<IActionResult> CreateAccount(Account incomingData)
     {
-        if (!ModelState.IsValid)
-        {
-            var errors = ModelState.Values.SelectMany(v => v.Errors)
-                .Select(e => e.ErrorMessage)
-                .ToList();
-            
-            return BadRequest("Invalid account data provided.");
-        }
+         if (!ModelState.IsValid)
+         {
+             var errors = ModelState.Values.SelectMany(v => v.Errors)
+                 .Select(e => e.ErrorMessage)
+                 .ToList();
+             
+             _logger.LogError("Model state is invalid. Errors: {Errors}", string.Join(", ", errors));
+             
+             return BadRequest("Invalid account data provided.");
+         }
+        
+         _logger.LogInformation("---- Reached the PUT account method ----");
+        
+         //Name "empty" check is not necessary since the FullName property is required in the Account model,
+         //It could be checked whether the name is valid but that is probably not necessary for now
+         if (incomingData == null)
+             return BadRequest("Account data is null.");
 
-        //Name "empty" check is not necessary since the FullName property is required in the Account model,
-        //It could be checked whether the name is valid but that is probably not necessary for now
-        if (account == null)
-            return BadRequest("Account data is null.");
+         Account existingAccount = _repo.GetAccount(incomingData.ID);
+         if (existingAccount != null)
+             return BadRequest($"Account with ID: {incomingData.ID} already exists.");
 
-        //Check if ID already exists
-        // Account existingAccount = _repo.GetAccount(account.ID);
-        // if (existingAccount != null)
-        //     return BadRequest($"Account with ID: {account.ID} already exists.");
-
-        Account newAccount = new Account()
-        {
-            ID = account.ID,
-            FullName = account.FullName,
-            Email = account.Email,
-            Password = account.Password,
-            PhoneNumber = account.PhoneNumber,
-            Data = new List<AccountData>()
-            {
-                new AccountData()
-                {
-                    Account = account,
-                    Balance = account.Data?.FirstOrDefault()?.Balance ?? 0.0f, // Default to 0 if no balance is provided
-                    Type = account.Data?.FirstOrDefault()?.Type ?? AccountType.Student // Default to Student if no type is provided
-                }
-            }
-        };
+         Account newAccount = new Account()
+         {
+             ID = incomingData.ID,
+             FullName = incomingData.FullName,
+             Email = incomingData.Email,
+             Password = incomingData.Password,
+             PhoneNumber = incomingData.PhoneNumber
+         };
 
         _repo.AddAccount(newAccount);
 
@@ -70,6 +66,8 @@ public class AccountController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetAccount(int id)
     {
+        _logger.LogInformation("---- Reached the GET account method ----");
+
         Account selectedAccount = _repo.GetAccount(id);
         if (selectedAccount == null)
             return NotFound(id);
@@ -80,6 +78,8 @@ public class AccountController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAccounts()
     {
+        _logger.LogInformation("---- Reached the GET accounts method ----");
+
         List<Account> accounts = _repo.GetAccounts();
         if (accounts == null)
             return NotFound("Accounts collection does not exist");
@@ -93,20 +93,24 @@ public class AccountController : ControllerBase
     [HttpPut("{givenID:int}")]
     public async Task<IActionResult> UpdateAccount(int givenID, Account newAccountData)
     {
+        _logger.LogInformation("---- Reached the PUT account method ----");
+
         Account selectedAccount = _repo.GetAccount(givenID);
         if (selectedAccount == null)
             return NotFound(givenID);
 
         _repo.UpdateAccount(givenID, newAccountData);
 
-        return Ok($"Full account updated successfully.");
+        return Ok(newAccountData);
     }
 
     [HttpPatch("{givenID:int}")]
     public async Task<IActionResult> UpdateAccount(int givenID, Dictionary<string, object> newData)
     {
-        Account selectedAccount = _repo.GetAccount(givenID);
-        if (selectedAccount == null)
+        _logger.LogInformation("---- Reached the PATCH account method ----");
+
+        Account updatedAccount = _repo.GetAccount(givenID);
+        if (updatedAccount == null)
             return NotFound($"Account with ID: {givenID} not found.");
 
         if (!newData.Any())
@@ -116,7 +120,7 @@ public class AccountController : ControllerBase
 
         foreach (var dataEntry in newData)
         {
-            object? convertedValue = AccountHelper.ConvertToProperty(dataEntry, selectedAccount);
+            object? convertedValue = AccountHelper.ConvertToProperty(dataEntry, updatedAccount);
 
             if (convertedValue == null)
                 return BadRequest($"Invalid data for property: {dataEntry.Key}");
@@ -125,18 +129,20 @@ public class AccountController : ControllerBase
             allDictionaryContents += $"{dataEntry.Key}: {convertedValue}\n";
         }
 
-        return Ok(selectedAccount);
+        return Ok(updatedAccount);
     }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteAccount(int id)
     {
+        _logger.LogInformation("---- Reached the DELETE account method ----");
+
         Account selectedAccount = _repo.GetAccount(id);
         if (selectedAccount == null)
             return NotFound($"Account with ID: {id} not found.");
 
         _repo.DeleteAccount(id);
 
-        return Ok("Account deleted successfully.");
+        return Ok();
     }
 }

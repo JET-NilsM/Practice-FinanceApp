@@ -56,16 +56,6 @@ public class AccountRepository : IAccountRepository
         account.Email = newData.Email;
         account.Password = newData.Password;
         account.PhoneNumber = newData.PhoneNumber;
-        account.Data = new List<AccountData>()
-        {
-            new AccountData()
-            {
-                Account = account,
-                Balance = newData.Data?.FirstOrDefault()?.Balance ?? 0.0f, // Default to 0 if no balance is provided
-                Type = newData.Data?.FirstOrDefault()?.Type ??
-                       AccountType.Student // Default to Student if no type is provided
-            }
-        };
         
         Save();
     }

@@ -1,6 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using TransactionService;
 using TransactionService.Controllers;
 using TransactionService.Models;
@@ -8,16 +10,22 @@ using Xunit;
 using Xunit.Abstractions;
 using Moq;
 using TransactionService.Repositories;
+using TransactionServiceTests.Integration_Tests;
+using Xunit.Extensions.Logging;
 
 namespace TransactionServiceTests.UnitTests;
 
 public class AccountControllerTests
 {
-    private readonly ITestOutputHelper output;
+    private readonly XunitLoggerProvider _logProvider;
 
-    public AccountControllerTests(ITestOutputHelper output)
+    public AccountControllerTests(CustomWebApplicationFactory factory, ITestOutputHelper output)
     {
-        this.output = output;
+        _logProvider = new XunitLoggerProvider(
+            output, 
+            (category, logLevel) => true // log everything
+        );
+        factory.Server.Host.Services.GetRequiredService<ILoggerFactory>().AddProvider(_logProvider);
     }
     
     [Fact] 
@@ -25,7 +33,8 @@ public class AccountControllerTests
     {
         // Arrange
         var mockRepo = new Mock<IAccountRepository>();
-        var accountController = new AccountController(mockRepo.Object);
+        var mockLogger = new Mock<ILogger<AccountController>>();
+        var accountController = new AccountController(mockRepo.Object, mockLogger.Object);
         var newAccount = new Account
         {
             ID = 123,
@@ -59,7 +68,8 @@ public class AccountControllerTests
     {
         // Arrange
         var mockRepo = new Mock<IAccountRepository>();
-        var accountController = new AccountController(mockRepo.Object);
+        var mockLogger = new Mock<ILogger<AccountController>>();
+        var accountController = new AccountController(mockRepo.Object, mockLogger.Object);
         var existingAccount = new Account
         {
             ID = 1,
@@ -95,7 +105,8 @@ public class AccountControllerTests
     {
         // Arrange
         var mockRepo = new Mock<IAccountRepository>();
-        var accountController = new AccountController(mockRepo.Object);
+        var mockLogger = new Mock<ILogger<AccountController>>();
+        var accountController = new AccountController(mockRepo.Object, mockLogger.Object);
         
         // Act
         var result = await accountController.CreateAccount(null);
@@ -130,7 +141,8 @@ public class AccountControllerTests
                 }
         });
 
-        var accountController = new AccountController(mockRepo.Object);
+        var mockLogger = new Mock<ILogger<AccountController>>();
+        var accountController = new AccountController(mockRepo.Object, mockLogger.Object);
         
         // Act
         var result = await accountController.GetAccounts();
@@ -145,7 +157,8 @@ public class AccountControllerTests
     {
         // Arrange
         var mockRepo = new Mock<IAccountRepository>();
-        var accountController = new AccountController(mockRepo.Object);
+        var mockLogger = new Mock<ILogger<AccountController>>();
+        var accountController = new AccountController(mockRepo.Object, mockLogger.Object);
         mockRepo.Setup(repo => repo.GetAccount(-1)).Returns((Account)null);
         
         // Act
@@ -161,7 +174,8 @@ public class AccountControllerTests
     {
         // Arrange
         var mockRepo = new Mock<IAccountRepository>();
-        var accountController = new AccountController(mockRepo.Object);
+        var mockLogger = new Mock<ILogger<AccountController>>();
+        var accountController = new AccountController(mockRepo.Object, mockLogger.Object);
         mockRepo.Setup(repo => repo.GetAccount(1)).Returns(new Account
         {
             ID = 1,
@@ -192,7 +206,8 @@ public class AccountControllerTests
     {
         // Arrange   
         var mockRepo = new Mock<IAccountRepository>();
-        var accountController = new AccountController(mockRepo.Object);
+        var mockLogger = new Mock<ILogger<AccountController>>();
+        var accountController = new AccountController(mockRepo.Object, mockLogger.Object);
         var newAccount = new Account
         {
             ID = 5,
@@ -227,7 +242,8 @@ public class AccountControllerTests
     {
         // Arrange   
         var mockRepo = new Mock<IAccountRepository>();
-        var accountController = new AccountController(mockRepo.Object);
+        var mockLogger = new Mock<ILogger<AccountController>>();
+        var accountController = new AccountController(mockRepo.Object, mockLogger.Object);
         var newAccount = new Account
         {
             ID = 125,
@@ -262,7 +278,8 @@ public class AccountControllerTests
     {
         // Arrange
         var mockRepo = new Mock<IAccountRepository>();
-        var accountController = new AccountController(mockRepo.Object);
+        var mockLogger = new Mock<ILogger<AccountController>>();
+        var accountController = new AccountController(mockRepo.Object, mockLogger.Object);
         var newData = new Account()
         {
             ID = 1,
@@ -296,7 +313,8 @@ public class AccountControllerTests
     {
         // Arrange   
         var mockRepo = new Mock<IAccountRepository>();
-        var controller = new AccountController(mockRepo.Object);
+        var mockLogger = new Mock<ILogger<AccountController>>();
+        var accountController = new AccountController(mockRepo.Object, mockLogger.Object);
         var existingAccount = new Account()
         {
             ID = 1,
@@ -318,7 +336,7 @@ public class AccountControllerTests
         
         
         // Act
-        var  result = await controller.UpdateAccount(1, new Dictionary<string, object>()
+        var  result = await accountController.UpdateAccount(1, new Dictionary<string, object>()
         {
             
         });
@@ -334,7 +352,8 @@ public class AccountControllerTests
     {
         // Arrange
         var mockRepo = new Mock<IAccountRepository>();
-        var accountController = new AccountController(mockRepo.Object);
+        var mockLogger = new Mock<ILogger<AccountController>>();
+        var accountController = new AccountController(mockRepo.Object, mockLogger.Object);
         var existingAccount = new Account()
         {
             ID = 1,
@@ -371,7 +390,8 @@ public class AccountControllerTests
     {
         // Arrange
         var mockRepo = new Mock<IAccountRepository>();
-        var accountController = new AccountController(mockRepo.Object);
+        var mockLogger = new Mock<ILogger<AccountController>>();
+        var accountController = new AccountController(mockRepo.Object, mockLogger.Object);
         var existingAccount = new Account
         {
             ID = 2,
@@ -405,7 +425,8 @@ public class AccountControllerTests
     {
         // Arrange
         var mockRepo = new Mock<IAccountRepository>();
-        var accountController = new AccountController(mockRepo.Object);
+        var mockLogger = new Mock<ILogger<AccountController>>();
+        var accountController = new AccountController(mockRepo.Object, mockLogger.Object);
         mockRepo.Setup(repo => repo.GetAccount(-1)).Returns((Account)null);
         
         // Act

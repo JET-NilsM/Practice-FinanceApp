@@ -2,9 +2,14 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 using TransactionService.Models;
+using Xunit.Abstractions;
+using Xunit.Extensions.Logging;
 
 namespace TransactionServiceTests.Integration_Tests;
 
@@ -14,51 +19,52 @@ namespace TransactionServiceTests.Integration_Tests;
 /// [Theory] is used to run tests with parameters and different data sets, for both unit and integration tests.
 /// [Fact] is used for simple tests that do not require parameters.
 /// </summary>
-public class AccountControllerTests : IClassFixture<WebApplicationFactory<Program>>
-{
+public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>, IDisposable{
     private readonly CustomWebApplicationFactory _factory;
+    private XunitLoggerProvider _loggerProvider;
     private HttpClient _client;
     
-    public AccountControllerTests()
+    public AccountControllerTests(ITestOutputHelper output)
     {
-        _factory = new CustomWebApplicationFactory();
-        _client = _factory.CreateClient();
+        _loggerProvider = new XunitLoggerProvider(
+            output,
+            (category, logLevel) => true // log everything
+        );
+        var factory = new CustomWebApplicationFactory()
+            .WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureLogging(logging =>
+                {
+                    logging.ClearProviders();
+                    logging.AddProvider(_loggerProvider);
+                });
+            });
+
+        _client = factory.CreateClient();
     }
 
     [Fact]
     public async Task CreateAccount_ReturnsCreated()
     {
-        var newAccount = new 
+        Account newAccount = new Account()
         {
             FullName = "John Doe",
-            Email = "test@gmail.com",
+            Email = "john.doe@example.com",
             Password = "password123",
-            PhoneNumber = "+31 6 12345678",
-            Data = new List<AccountData>()
-            {
-                new AccountData()
-                {
-                    Balance = 100.0f,
-                    Type = 0
-                }
-            }
+            PhoneNumber = "0612345678"
         };
-        
         
         var stringContent = new StringContent(JsonSerializer.Serialize(newAccount), Encoding.UTF8, "application/json");
         
-        Console.WriteLine(stringContent);
-        
         HttpResponseMessage response = await _client.PostAsync("/api/account", stringContent);
         
-        // var returnedAccount = await response.Content.ReadFromJsonAsync<Account>();
-
-        var res = await response.Content.ReadAsStringAsync();
+        var returnedAccount = await response.Content.ReadFromJsonAsync<Account>();
         
-        Console.WriteLine(res);
-        
-        // Assert.NotNull(returnedAccount);
-        // Assert.Equal(newAccount.FullName, returnedAccount.FullName);
+        Assert.NotNull(returnedAccount);
+        Assert.Equal(newAccount.FullName, returnedAccount.FullName);
+        Assert.Equal(newAccount.Email, returnedAccount.Email);
+        Assert.Equal(newAccount.Password, returnedAccount.Password);
+        Assert.Equal(newAccount.PhoneNumber, returnedAccount.PhoneNumber);
     }
     
     
@@ -104,7 +110,7 @@ public class AccountControllerTests : IClassFixture<WebApplicationFactory<Progra
 
     //put update account should return notfound if account does not exist
     [Fact]
-    public async Task PutAccount_AccountDoesNotExist_ReturnNotFound()
+    public async Task PutAccount_DoesNotExist_ReturnNotFound()
     {
         Account newData = new Account
         {
@@ -114,7 +120,7 @@ public class AccountControllerTests : IClassFixture<WebApplicationFactory<Progra
             PhoneNumber = "+31 6 12345678",
             Data = new List<AccountData>()
             {
-                new AccountData()
+                new AccountData
                 {
                     Balance = 100.0f,
                     Type = AccountType.Student
@@ -198,4 +204,6 @@ public class AccountControllerTests : IClassFixture<WebApplicationFactory<Progra
         
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
+    
+    public void Dispose() => _loggerProvider?.Dispose();
 }
