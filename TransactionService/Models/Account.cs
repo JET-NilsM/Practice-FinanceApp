@@ -10,11 +10,10 @@ public class Account
     //Not created by the user but by the system using UUID like we discussed but not necessary for now.
     //Can just work with incrementing integers for now.
     [JsonPropertyName("id")] public int ID { get; set; }
-    
-    [JsonPropertyName("fullName")] public required string FullName { get; set; }
-    [JsonPropertyName("email")] public required string Email { get; set; }
-    [JsonPropertyName("password")] public required string Password { get; set; }
-    [Phone] [JsonPropertyName("phoneNumber")] public string PhoneNumber { get; set; }
+    [JsonPropertyName("fullName")] [Required] public string FullName { get; set; }
+    [JsonPropertyName("email")] [Required] [EmailValidation] public string Email { get; set; }
+    [JsonPropertyName("password")] [Required] public string Password { get; set; }
+    [JsonPropertyName("phoneNumber")] public string PhoneNumber { get; set; }
 
     public ICollection<AccountData> Data { get; set; } = new List<AccountData>();
 }
