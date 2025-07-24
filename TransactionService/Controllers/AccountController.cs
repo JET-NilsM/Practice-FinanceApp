@@ -14,7 +14,6 @@ namespace TransactionService.Controllers;
 [Route("api/[controller]")]
 public class AccountController : ControllerBase
 {
-    private AccountsModel _accountsModel;
     private IAccountRepository _repo;
     private readonly ILogger _logger;
 
@@ -27,36 +26,23 @@ public class AccountController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateAccount(Account incomingData)
     {
-         if (!ModelState.IsValid)
-         {
-             var errors = ModelState.Values.SelectMany(v => v.Errors)
-                 .Select(e => e.ErrorMessage)
-                 .ToList();
-             
-             _logger.LogError("Model state is invalid. Errors: {Errors}", string.Join(", ", errors));
-             
-             return BadRequest("Invalid account data provided.");
-         }
-        
-         _logger.LogInformation("---- Reached the PUT account method ----");
-        
-         //Name "empty" check is not necessary since the FullName property is required in the Account model,
-         //It could be checked whether the name is valid but that is probably not necessary for now
-         if (incomingData == null)
-             return BadRequest("Account data is null.");
+        _logger.LogInformation("---- Reached the PUT account method ----");
 
-         Account existingAccount = _repo.GetAccount(incomingData.ID);
-         if (existingAccount != null)
-             return BadRequest($"Account with ID: {incomingData.ID} already exists.");
+        if (!ModelState.IsValid)
+            return BadRequest(); 
 
-         Account newAccount = new Account()
-         {
-             ID = incomingData.ID,
-             FullName = incomingData.FullName,
-             Email = incomingData.Email,
-             Password = incomingData.Password,
-             PhoneNumber = incomingData.PhoneNumber
-         };
+        Account existingAccount = _repo.GetAccount(incomingData.ID);
+        if (existingAccount != null)
+            return BadRequest($"Account with ID: {incomingData.ID} already exists.");
+
+        Account newAccount = new Account()
+        {
+            ID = incomingData.ID,
+            FullName = incomingData.FullName,
+            Email = incomingData.Email,
+            Password = incomingData.Password,
+            PhoneNumber = incomingData.PhoneNumber
+        };
 
         _repo.AddAccount(newAccount);
 

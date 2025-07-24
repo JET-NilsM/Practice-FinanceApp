@@ -28,7 +28,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
         builder.ConfigureServices((context, services) =>
         {
             var config = context.Configuration;
-            var connectionString = config.GetConnectionString("TestDatabase");
+            var connectionString = config.GetConnectionString("DefaultConnection");
             
             services.RemoveAll<DbContextOptions<FinanceContext>>();
             services.AddDbContext<FinanceContext>(options =>

@@ -49,7 +49,7 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
         Account newAccount = new Account()
         {
             FullName = "John Doe",
-            Email = "john.doe@example.com",
+            Email = "john.doe@gmail.com",
             Password = "password123",
             PhoneNumber = "0612345678"
         };
@@ -67,10 +67,27 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
         Assert.Equal(newAccount.PhoneNumber, returnedAccount.PhoneNumber);
     }
     
+    //Create account should return badrequest if the email address is already in use
     
-    //Duplicate ID should return badrequest
-
+    
     //Invalid data (invalid email) should return badrequest
+    [Fact]
+    public async Task CreateAccount_InvalidEmail_ReturnsBadRequest()
+    {
+        Account newAccount = new Account()
+        {
+            FullName = "Jane Doe",
+            Email = "invalid-email",
+            Password = "password123",
+            PhoneNumber = "0612345678"
+        };
+        
+        var stringContent = new StringContent(JsonSerializer.Serialize(newAccount), Encoding.UTF8, "application/json");
+        
+        HttpResponseMessage response = await _client.PostAsync("/api/account", stringContent);
+        
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
     
     [Fact]
     public async Task GetAccountById_ReturnsOk()
