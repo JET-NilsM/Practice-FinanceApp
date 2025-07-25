@@ -42,6 +42,9 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
 
         _client = factory.CreateClient();
     }
+    
+    public void Dispose() => _loggerProvider?.Dispose();
+
 
     [Fact]
     public async Task CreateAccount_ReturnsCreated()
@@ -185,9 +188,7 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
         
         response.EnsureSuccessStatusCode();
         
-        var returnedAccount = await response.Content.ReadFromJsonAsync<Account>();
-        
-        Assert.Equal(returnedAccount.FullName, returnedAccount.FullName);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     //patch account should return notfound if account does not exist
@@ -221,6 +222,4 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
         
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
-    
-    public void Dispose() => _loggerProvider?.Dispose();
 }
