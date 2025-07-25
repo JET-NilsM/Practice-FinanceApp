@@ -1,3 +1,5 @@
+using System.Text.Json;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using TransactionService.Data;
 using TransactionService.Repositories;
@@ -10,11 +12,27 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddDbContext<FinanceContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("TestDatabase")));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection")
+    )
+);
 
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+        if (exceptionHandlerPathFeature?.Error is JsonException)
+        {
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            context.Response.ContentType = "application/json";
+            await context.Response.WriteAsync("{\"error\": \"Invalid JSON or missing required fields.\"}");
+        }
+    });
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

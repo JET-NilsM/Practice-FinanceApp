@@ -17,34 +17,25 @@ public class EmailValidationAttribute : ValidationAttribute
 
     protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
     {
-        if (value == null)
-        {
-            return new ValidationResult("Value cannot be null");
-        }
+        if (value == null || string.IsNullOrWhiteSpace(value as string))
+            return ValidationResult.Success;
 
         if (!(value is string valueAsString))
-        {
             return new ValidationResult("Value is not a string");
-        }
         
         if (valueAsString.AsSpan().ContainsAny('\r', '\n'))
-        {
             return new ValidationResult("Value contains linebreaks");
-        }
         
         int atIndex = valueAsString.IndexOf('@');
         
         if (atIndex < 0 || 
             atIndex == valueAsString.Length - 1 ||
             atIndex != valueAsString.LastIndexOf('@'))
-        {
             return new ValidationResult("Value format is invalid");
-        }
 
-        if (!_domainWhitelist.Contains(valueAsString.Substring(atIndex + 1)))
-        {
+        var extractedDomain = valueAsString.Substring(atIndex + 1);
+        if (!_domainWhitelist.Contains(extractedDomain))
             return new ValidationResult("Provided domain is not whitelisted.");
-        }        
 
         return ValidationResult.Success;
     }
