@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using System.Net;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,18 +17,13 @@ using Xunit.Extensions.Logging;
 
 namespace TransactionServiceTests.UnitTests;
 
-public class AccountControllerTests
-{
-    private readonly XunitLoggerProvider _logProvider;
-
-    public AccountControllerTests(CustomWebApplicationFactory factory, ITestOutputHelper output)
+public class AccountControllerTests {
+    
+    public AccountControllerTests()
     {
-        _logProvider = new XunitLoggerProvider(
-            output, 
-            (category, logLevel) => true // log everything
-        );
-        factory.Server.Host.Services.GetRequiredService<ILoggerFactory>().AddProvider(_logProvider);
+        
     }
+    
     
     [Fact] 
     public async void CreateAccount_ShouldReturnOk_WhenValidAccount()
@@ -42,14 +39,6 @@ public class AccountControllerTests
             Email = "unitTest@gmail.com",
             Password = "testPassword123",
             PhoneNumber = "+31 6 12345678",
-            Data = new List<AccountData>()
-            {
-                new AccountData()
-                {
-                    Balance = 100.0f,
-                    Type = AccountType.Student
-                }
-            }
         };
 
         mockRepo.Setup(repo => repo.GetAccount(newAccount.ID)).Returns((Account)null);
@@ -57,10 +46,10 @@ public class AccountControllerTests
         // Act
         ValidateModel(newAccount, accountController.ModelState);
         var result = await accountController.CreateAccount(newAccount);
-        var isOkResult = Assert.IsType<CreatedResult>(result);
 
         // Assert
-        Assert.Equal(newAccount.FullName, isOkResult.Value);
+        var createdResult = Assert.IsType<CreatedResult>(result);
+        Assert.Equal((int)HttpStatusCode.Created, createdResult.StatusCode);
     }
     
     [Fact] 
@@ -95,8 +84,8 @@ public class AccountControllerTests
         var result = await accountController.CreateAccount(existingAccount);
         
         // Assert
-        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Equal("Account with ID: 1 already exists.", badRequestResult.Value);
+        var badRequestResult = Assert.IsType<BadRequestResult>(result);
+        Assert.Equal((int)HttpStatusCode.BadRequest, badRequestResult.StatusCode);
         mockRepo.Verify(repo => repo.AddAccount(It.IsAny<Account>()), Times.Never);
     }
 
@@ -110,10 +99,10 @@ public class AccountControllerTests
         
         // Act
         var result = await accountController.CreateAccount(null);
-
+ 
         // Assert
-        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Equal("Account data is null.", badRequestResult.Value);
+        var badRequestResult = Assert.IsType<BadRequestResult>(result);
+        Assert.Equal((int)HttpStatusCode.BadRequest, badRequestResult.StatusCode);
     }
 
     [Fact]
@@ -165,8 +154,8 @@ public class AccountControllerTests
         var result = await accountController.GetAccount(-1);
         
         // Assert
-        var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
-        Assert.Equal("Account with ID: -1 not found.", notFoundResult.Value);
+        var notFoundResult = Assert.IsType<NotFoundResult>(result);
+        Assert.Equal((int)HttpStatusCode.NotFound, notFoundResult.StatusCode);
     }
     
     [Fact] 
@@ -232,8 +221,8 @@ public class AccountControllerTests
         var result = await accountController.CreateAccount(newAccount);
         
         //Assert
-        var updatedResult = Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Equal("Invalid account data provided.", updatedResult.Value);
+        var updatedResult = Assert.IsType<BadRequestResult>(result);  
+        Assert.Equal((int)HttpStatusCode.BadRequest, updatedResult.StatusCode);
         mockRepo.Verify(repo => repo.AddAccount(It.IsAny<Account>()), Times.Never);
     }
 
@@ -266,8 +255,8 @@ public class AccountControllerTests
         var result = await accountController.CreateAccount(newAccount);     
                                                                     
         //Assert                                                            
-        var updatedResult = Assert.IsType<BadRequestObjectResult>(result);  
-        Assert.Equal("Invalid account data provided.", updatedResult.Value);
+        var updatedResult = Assert.IsType<BadRequestResult>(result);  
+        Assert.Equal((int)HttpStatusCode.BadRequest, updatedResult.StatusCode);
         
         //verify to check that the method was never called since it is not a valid email address and therefore should not succeed.
         mockRepo.Verify(repo => repo.AddAccount(It.IsAny<Account>()), Times.Never);
@@ -303,8 +292,8 @@ public class AccountControllerTests
         var result = await accountController.UpdateAccount(chosenAccountID, newData);
         
         // Assert
-        var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
-        Assert.Equal("-1", notFoundResult.Value);
+        var notFoundResult = Assert.IsType<NotFoundResult>(result);
+        Assert.Equal((int)HttpStatusCode.NotFound, notFoundResult.StatusCode);
         mockRepo.Verify(repo => repo.UpdateAccount(chosenAccountID, It.IsAny<Account>()), Times.Never);
     }
     
@@ -342,8 +331,8 @@ public class AccountControllerTests
         });
         
         //Assert
-        var updatedResult = Assert.IsType<BadRequestObjectResult>(result);
-        Assert.Equal("No data provided for update.", updatedResult.Value);
+        var notFoundResult = Assert.IsType<BadRequestResult>(result);
+        Assert.Equal((int)HttpStatusCode.BadRequest, notFoundResult.StatusCode);
         mockRepo.Verify(repo => repo.UpdateAccount(1, It.IsAny<Account>()), Times.Never);
     }
 
@@ -381,8 +370,8 @@ public class AccountControllerTests
         var result = await accountController.UpdateAccount(1, newData);
         
         // Assert
-        var updatedResult = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal($"Account with ID: 1 updated successfully. New data: Email: unitTest@gmail.com", updatedResult.Value.ToString().Trim());
+        var updatedResult = Assert.IsType<OkResult>(result);
+        Assert.Equal((int)HttpStatusCode.OK, updatedResult.StatusCode);
     }
 
     [Fact]
@@ -415,8 +404,8 @@ public class AccountControllerTests
         var result = await accountController.DeleteAccount(2);
         
         // Assert
-        var notFoundResult = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal($"Account deleted successfully.", notFoundResult.Value);
+        var updatedResult = Assert.IsType<OkResult>(result);  
+        Assert.Equal((int)HttpStatusCode.OK, updatedResult.StatusCode);
         mockRepo.Verify(repo => repo.DeleteAccount(2), Times.Once);
     }
     
@@ -433,8 +422,8 @@ public class AccountControllerTests
         var result = await accountController.DeleteAccount(-1);
         
         // Assert
-        var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
-        Assert.Equal("Account with ID: -1 not found.", notFoundResult.Value);
+        var notFoundResult = Assert.IsType<NotFoundResult>(result);
+        Assert.Equal((int)HttpStatusCode.NotFound, notFoundResult.StatusCode);
         mockRepo.Verify(repo => repo.DeleteAccount(It.IsAny<int>()), Times.Never);
     }
 
