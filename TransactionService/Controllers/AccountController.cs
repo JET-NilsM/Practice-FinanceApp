@@ -1,12 +1,7 @@
-using System.ComponentModel.DataAnnotations;
-using System.Net.Mail;
-using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
-using TransactionService.Data;
 using TransactionService.Models;
 using TransactionService.Repositories;
 using TransactionService.Utilities;
-using Xunit.Sdk;
 
 namespace TransactionService.Controllers;
 
@@ -28,12 +23,15 @@ public class AccountController : ControllerBase
     {
         _logger.LogInformation("---- Reached the PUT account method ----");
 
+        if (incomingData == null)
+            return BadRequest();
+
         if (!ModelState.IsValid)
             return BadRequest(); 
 
         Account existingAccount = _repo.GetAccount(incomingData.ID);
         if (existingAccount != null)
-            return BadRequest($"Account with ID: {incomingData.ID} already exists.");
+            return BadRequest();
 
         Account newAccount = new Account()
         {
@@ -56,7 +54,7 @@ public class AccountController : ControllerBase
 
         Account selectedAccount = _repo.GetAccount(id);
         if (selectedAccount == null)
-            return NotFound(id);
+            return NotFound();
 
         return Ok(selectedAccount);
     }
@@ -68,10 +66,10 @@ public class AccountController : ControllerBase
 
         List<Account> accounts = _repo.GetAccounts();
         if (accounts == null)
-            return NotFound("Accounts collection does not exist");
+            return NotFound();
 
         if (accounts.Count == 0)
-            return NotFound("Accounts collection is empty.");
+            return NotFound();
 
         return Ok(accounts);
     }
@@ -83,7 +81,7 @@ public class AccountController : ControllerBase
 
         Account selectedAccount = _repo.GetAccount(givenID);
         if (selectedAccount == null)
-            return NotFound(givenID);
+            return NotFound();
 
         _repo.UpdateAccount(givenID, newAccountData);
 
@@ -97,10 +95,10 @@ public class AccountController : ControllerBase
 
         Account updatedAccount = _repo.GetAccount(givenID);
         if (updatedAccount == null)
-            return NotFound($"Account with ID: {givenID} not found.");
+            return NotFound();
 
         if (!newData.Any())
-            return BadRequest("No data provided for update.");
+            return BadRequest();
 
         string allDictionaryContents = "";
 
@@ -109,13 +107,13 @@ public class AccountController : ControllerBase
             object? convertedValue = AccountHelper.ConvertToProperty(dataEntry, updatedAccount);
 
             if (convertedValue == null)
-                return BadRequest($"Invalid data for property: {dataEntry.Key}");
+                return BadRequest();
 
             //Just for debugging to check if the dictionary is being processed correctly from Insomnia > controller
             allDictionaryContents += $"{dataEntry.Key}: {convertedValue}\n";
         }
 
-        return Ok(updatedAccount);
+        return Ok();
     }
 
     [HttpDelete("{id:int}")]
@@ -125,7 +123,7 @@ public class AccountController : ControllerBase
 
         Account selectedAccount = _repo.GetAccount(id);
         if (selectedAccount == null)
-            return NotFound($"Account with ID: {id} not found.");
+            return NotFound();
 
         _repo.DeleteAccount(id);
 
