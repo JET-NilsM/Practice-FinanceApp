@@ -39,6 +39,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Docs\Diagrams\" />
       <Folder Include="Migrations\" />
     </ItemGroup>
 
