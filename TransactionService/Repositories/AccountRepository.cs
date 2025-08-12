@@ -33,7 +33,7 @@ public class AccountRepository : IAccountRepository
     public void AddAccount(Account account)
     {
         _context.Accounts.Add(account);
-        Save();
+        _context.Save();
     }
     
     public void DeleteAccount(int id)
@@ -42,7 +42,7 @@ public class AccountRepository : IAccountRepository
         if (account != null)
         {
             _context.Accounts.Remove(account);
-            Save();
+            _context.Save();
         } else throw new KeyNotFoundException($"Account with ID {id} not found.");
     }
 
@@ -57,21 +57,11 @@ public class AccountRepository : IAccountRepository
         account.Password = newData.Password;
         account.PhoneNumber = newData.PhoneNumber;
         
-        Save();
-    }
-
-    public void Save()
-    {
-        _context.SaveChanges();
+        _context.Save();
     }
 
     public void Dispose()
     {
         _context.Dispose();
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
     }
 }
