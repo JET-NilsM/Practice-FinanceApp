@@ -9,5 +9,4 @@ public interface IAccountRepository : IDisposable
     void AddAccount(Account account);
     void DeleteAccount(int id);
     void UpdateAccount(int id, Account newData);
-    void Save();
 }
