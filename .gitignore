@@ -56,3 +56,4 @@ nunit-*.xml
 .DS_Store
 
 TransactionService/appsettings.json
+TransactionService/.idea/.idea.TransactionService/.idea/aws.xml
