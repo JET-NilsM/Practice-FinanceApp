@@ -14,7 +14,6 @@ namespace TransactionService.Controllers;
 [Route("api/[controller]")]
 public class AccountController : ControllerBase
 {
-    private AccountsModel _accountsModel;
     private IAccountRepository _repo;
 
     public AccountController(IAccountRepository repo)

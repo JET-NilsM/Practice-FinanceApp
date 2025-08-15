@@ -63,13 +63,8 @@ direction TB
 	    +static ConvertToProperty() : object
     }
 
-    class UntitledClass {
-    }
-
 	<<enumeration>> AccountType
 	<<interface>> IAccountRepository
-
-	note for Account "[EmailValidation]"
 
     IAccountRepository <|.. AccountRepository
     Account <|-- AccountRepository : operates on
@@ -80,7 +75,6 @@ direction TB
     User --> AccountController : POST
     User --> AccountController : PUT
     User --> AccountController : DELETE
-    AccountType -- UntitledClass
 
 
 ```

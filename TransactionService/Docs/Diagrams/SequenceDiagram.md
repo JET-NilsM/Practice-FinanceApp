@@ -1,9 +1,6 @@
 ```mermaid
 sequenceDiagram
     actor User
-    actor AccountController
-    actor AccountRepository
-    actor FinanceContext
 
         User->>AccountController: HttpPost Account
         loop Check if account exists
