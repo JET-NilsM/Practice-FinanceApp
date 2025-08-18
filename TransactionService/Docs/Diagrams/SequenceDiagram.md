@@ -3,16 +3,20 @@ sequenceDiagram
     actor User
 
         User->>AccountController: HttpPost Account
-        alt Check if account is valid
-        AccountController->>AccountController: Check if modelState is valid
+        alt Check model state != valid
         AccountController->>User: Return BadRequest()
         end
         AccountController->>AccountRepository: AddAccount(Account)
-        
-        alt Save account to DB
         AccountRepository->>FinanceContext: Accounts.Add() 
-        AccountRepository->>AccountRepository : Save changes
-        AccountController-->>User : Return Created(newAccount)
+        AccountRepository->>FinanceContext : Save()
+        FinanceContext-->>AccountRepository : saveSuccessful
+        
+        alt Has saved?
+        AccountRepository-->>AccountController : saveSuccessful == false
+        AccountController-->>User : return BadRequest()
+        else 
+            AccountRepository-->>AccountController : saveSuccessful = true
+            AccountController-->>User : Return Created(newAccount)
         end
         
 ```
