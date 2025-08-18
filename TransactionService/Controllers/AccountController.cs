@@ -23,15 +23,8 @@ public class AccountController : ControllerBase
     {
         _logger.LogInformation("---- Reached the PUT account method ----");
 
-        if (incomingData == null)
-            return BadRequest();
-
         if (!ModelState.IsValid)
             return BadRequest(); 
-
-        Account existingAccount = _repo.GetAccount(incomingData.ID);
-        if (existingAccount != null)
-            return BadRequest();
 
         Account newAccount = new Account()
         {
@@ -42,7 +35,8 @@ public class AccountController : ControllerBase
             PhoneNumber = incomingData.PhoneNumber
         };
 
-        _repo.AddAccount(newAccount);
+        if (!_repo.AddAccount(newAccount))
+            return BadRequest();
 
         return Created($"/api/account/{newAccount.ID}", newAccount);
     }
