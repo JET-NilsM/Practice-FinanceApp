@@ -6,7 +6,6 @@ erDiagram
         string Email
         string Password
         string PhoneNumber
-        List~ACCOUNT_DATA~ Data
     }
     
     ACCOUNT_DATA{
