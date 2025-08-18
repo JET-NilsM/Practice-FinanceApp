@@ -30,10 +30,10 @@ public class AccountRepository : IAccountRepository
         return null;
     }
     
-    public void AddAccount(Account account)
+    public bool AddAccount(Account account)
     {
         _context.Accounts.Add(account);
-        _context.Save();
+        return _context.Save();
     }
     
     public void DeleteAccount(int id)

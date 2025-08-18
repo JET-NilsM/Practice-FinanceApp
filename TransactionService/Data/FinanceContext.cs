@@ -12,7 +12,7 @@ public class FinanceContext : DbContext
         
     }
     
-    public void Save()
+    public bool Save()
     {
         try
         {
@@ -21,6 +21,9 @@ public class FinanceContext : DbContext
         catch (DbUpdateException exception)
         {
             Console.WriteLine("An error occurred while saving changes to the database: " + exception.Message);
+            return false;
         }
+
+        return true;
     }
 }
