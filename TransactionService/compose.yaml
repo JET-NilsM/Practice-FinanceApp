@@ -1,0 +1,15 @@
+﻿services:
+  transactionservice:
+    image: transaction-service-test
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+    - "5001:5001"
+  sqldata:
+    image: mcr.microsoft.com/mssql/server:latest
+    environment:
+    - SA_PASSWORD="YourStrongPassw0rd"
+    - ACCEPT_EULA=Y
+    ports:
+    - "5433:1433"
