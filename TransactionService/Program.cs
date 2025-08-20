@@ -2,7 +2,9 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using TransactionService.Data;
+using TransactionService.Mapper;
 using TransactionService.Repositories;
+using TransactionService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +12,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
 
+builder.Services.AddScoped<IAccountMapper, AccountMapper>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+
 builder.Services.AddDbContext<FinanceContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 

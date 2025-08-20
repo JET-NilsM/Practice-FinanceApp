@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
+using TransactionService.Data;
+using TransactionService.DTO;
 using TransactionService.Models;
 using TransactionService.Repositories;
+using TransactionService.Services;
 using TransactionService.Utilities;
 
 namespace TransactionService.Controllers;
@@ -10,6 +13,7 @@ namespace TransactionService.Controllers;
 public class AccountController : ControllerBase
 {
     private IAccountRepository _repo;
+    private IAccountService _service;
     private readonly ILogger _logger;
 
     public AccountController(IAccountRepository repo, ILogger<AccountController> logger)
@@ -26,16 +30,15 @@ public class AccountController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(); 
 
-        Account newAccount = new Account()
+        AccountDTO newAccount = new AccountDTO()
         {
             ID = incomingData.ID,
             FullName = incomingData.FullName,
             Email = incomingData.Email,
-            Password = incomingData.Password,
             PhoneNumber = incomingData.PhoneNumber
         };
 
-        if (!_repo.AddAccount(newAccount))
+        if (!_service.AddAccount(newAccount))
             return BadRequest();
 
         return Created($"/api/account/{newAccount.ID}", newAccount);
