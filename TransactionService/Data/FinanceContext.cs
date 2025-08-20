@@ -6,6 +6,8 @@ namespace TransactionService.Data;
 public class FinanceContext : DbContext
 {
     public DbSet<Account> Accounts { get; set; }
+    
+    public DbSet<Password> HashedPasswords { get; set; }
 
     public FinanceContext(DbContextOptions<FinanceContext> options) : base(options)
     {

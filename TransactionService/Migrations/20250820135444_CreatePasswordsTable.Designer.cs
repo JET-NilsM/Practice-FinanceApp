@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TransactionService.Data;
 
@@ -11,9 +12,11 @@ using TransactionService.Data;
 namespace TransactionService.Migrations
 {
     [DbContext(typeof(FinanceContext))]
-    partial class FinanceContextModelSnapshot : ModelSnapshot
+    [Migration("20250820135444_CreatePasswordsTable")]
+    partial class CreatePasswordsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -99,7 +102,7 @@ namespace TransactionService.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("HashedPasswords");
+                    b.ToTable("EncrypedPasswords");
                 });
 
             modelBuilder.Entity("TransactionService.Models.AccountData", b =>

@@ -9,7 +9,6 @@ public class AccountsModel
             ID = 1,
             FullName = "Nils Meijer",
             Email = "nils@gmail.com",
-            Password = "password123",
             PhoneNumber =  "+31 6 12345678",
             Data = new List<AccountData>()
             {
@@ -25,7 +24,6 @@ public class AccountsModel
             ID = 2,
             FullName = "Test User",
             Email = "testUser@gmail.com",
-            Password = "password567",
             PhoneNumber =  "+31 6 12345678",
             Data = new List<AccountData>()
             {
