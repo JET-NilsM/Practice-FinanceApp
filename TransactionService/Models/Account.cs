@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using TransactionService.Utilities;
 
 namespace TransactionService.Models;
@@ -14,7 +13,6 @@ public class Account
     [JsonPropertyName("email")] [Required] [EmailValidation] public string Email { get; set; }
     [JsonPropertyName("password")] [Required] public string Password { get; set; }
     [JsonPropertyName("phoneNumber")] public string PhoneNumber { get; set; }
-
     public ICollection<AccountData> Data { get; set; } = new List<AccountData>();
 }
 

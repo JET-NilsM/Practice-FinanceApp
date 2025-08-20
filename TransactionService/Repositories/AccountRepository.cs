@@ -54,7 +54,6 @@ public class AccountRepository : IAccountRepository
         
         account.FullName = newData.FullName;
         account.Email = newData.Email;
-        account.Password = newData.Password;
         account.PhoneNumber = newData.PhoneNumber;
         
         _context.Save();
