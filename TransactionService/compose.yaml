@@ -6,10 +6,13 @@
       dockerfile: Dockerfile
     ports:
     - "5001:5001"
-  sqldata:
-    image: mcr.microsoft.com/mssql/server:latest
+  postgres:
+    image: postgres
+    container_name: postgres_db
     environment:
-    - SA_PASSWORD="YourStrongPassw0rd"
-    - ACCEPT_EULA=Y
+      - POSTGRES_USER=nils
+      - POSTGRES_PASSWORD="YourStrongPassw0rd"
+      - POSTGRES_DB=finance_db
+    platform: linux/amd64
     ports:
-    - "5433:1433"
+    - "5432:5432"
