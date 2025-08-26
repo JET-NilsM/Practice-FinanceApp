@@ -38,7 +38,7 @@ public class AccountController : ControllerBase
             PhoneNumber = incomingData.PhoneNumber
         };
 
-        if (!_service.AddAccount(newAccount))
+        if (!_service.AddAccount(newAccount, incomingData.Password))
             return BadRequest();
 
         return Created($"/api/account/{newAccount.ID}", newAccount);

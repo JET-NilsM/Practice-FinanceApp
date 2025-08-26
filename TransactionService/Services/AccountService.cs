@@ -2,6 +2,7 @@ using TransactionService.DTO;
 using TransactionService.Mapper;
 using TransactionService.Models;
 using TransactionService.Repositories;
+using TransactionService.Utilities;
 
 namespace TransactionService.Services;
 
@@ -16,10 +17,13 @@ public class AccountService : IAccountService
         _mapper = mapper;
     }
     
-    public bool AddAccount(AccountDTO dto)
+    public bool AddAccount(AccountDTO dto, string plainTextPassword)
     {
+        //Password hashing here
+        string hash = PasswordHasher.HashPassword(plainTextPassword);
+        
         //Error handling?
         Account accountModel = _mapper.MapToModel(dto);
-        return _repo.AddAccount(accountModel);
+        return _repo.AddAccount(accountModel, hash);
     }
 }

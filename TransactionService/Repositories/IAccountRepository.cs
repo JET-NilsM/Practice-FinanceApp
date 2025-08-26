@@ -6,7 +6,7 @@ public interface IAccountRepository : IDisposable
 {
     List<Account> GetAccounts();
     Account GetAccount(int id);
-    bool AddAccount(Account account);
+    bool AddAccount(Account account, string hash);
     void DeleteAccount(int id);
     void UpdateAccount(int id, Account newData);
 }
