@@ -4,7 +4,7 @@ using Konscious.Security.Cryptography;
 
 namespace TransactionService.Utilities;
 
-public static class PasswordEncryption
+public static class PasswordHasher
 {
     private const int SaltSize = 16;
     private const int HashSize = 32;

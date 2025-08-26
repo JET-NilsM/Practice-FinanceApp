@@ -7,7 +7,7 @@ public class FinanceContext : DbContext
 {
     public DbSet<Account> Accounts { get; set; }
     
-    public DbSet<Password> HashedPasswords { get; set; }
+    public DbSet<string> HashedPasswords { get; set; }
 
     public FinanceContext(DbContextOptions<FinanceContext> options) : base(options)
     {

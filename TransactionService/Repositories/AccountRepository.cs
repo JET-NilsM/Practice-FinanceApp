@@ -30,8 +30,9 @@ public class AccountRepository : IAccountRepository
         return null;
     }
     
-    public bool AddAccount(Account account)
+    public bool AddAccount(Account account, string hash)
     {
+        _context.HashedPasswords.Add(hash);       
         _context.Accounts.Add(account);
         return _context.Save();
     }
