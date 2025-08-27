@@ -33,7 +33,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             services.RemoveAll<DbContextOptions<FinanceContext>>();
             services.AddDbContext<FinanceContext>(options =>
             {
-                options.UseSqlServer(connectionString);
+                options.UseNpgsql(connectionString);
             });
             
             var serviceProvider = services.BuildServiceProvider();
@@ -44,8 +44,8 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
             db.Database.EnsureCreated();
             db.Accounts.RemoveRange(db.Accounts);
-            db.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('Accounts', RESEED, 0)");
-            db.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('AccountData', RESEED, 0)");
+            db.Database.ExecuteSqlRaw("ALTER SEQUENCE \"Accounts_ID_seq\" RESTART WITH 1;");
+            db.Database.ExecuteSqlRaw("ALTER SEQUENCE \"AccountData_ID_seq\" RESTART WITH 1;");
 
             SeedDatabase(db);
         });
