@@ -19,11 +19,15 @@ public class AccountService : IAccountService
     
     public bool AddAccount(AccountDTO dto, string plainTextPassword)
     {
-        //Password hashing here
         string hash = PasswordHasher.HashPassword(plainTextPassword);
-        
-        //Error handling?
         Account accountModel = _mapper.MapToModel(dto);
-        return _repo.AddAccount(accountModel, hash);
+        Password password = new Password()
+        {
+            AccountID = accountModel.ID,
+            HashedPassword = hash,
+            CreatedAt = DateTime.UtcNow
+        };
+        
+        return _repo.AddAccount(accountModel, password);
     }
 }

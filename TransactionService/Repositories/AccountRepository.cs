@@ -1,6 +1,5 @@
 using System.Data.Entity;
 using TransactionService.Data;
-using TransactionService.Migrations;
 using TransactionService.Models;
 
 namespace TransactionService.Repositories;
@@ -30,9 +29,9 @@ public class AccountRepository : IAccountRepository
         return null;
     }
     
-    public bool AddAccount(Account account, string hash)
+    public bool AddAccount(Account account, Password hashedPassword)
     {
-        _context.HashedPasswords.Add(hash);       
+        _context.HashedPasswords.Add(hashedPassword);       
         _context.Accounts.Add(account);
         return _context.Save();
     }
