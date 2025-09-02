@@ -57,3 +57,5 @@ nunit-*.xml
 
 TransactionService/appsettings.json
 TransactionService/.idea/.idea.TransactionService/.idea/aws.xml
+TransactionService/.idea/.idea.TransactionService/.idea/aws.xml
+TransactionService/TransactionService.sln.DotSettings.user

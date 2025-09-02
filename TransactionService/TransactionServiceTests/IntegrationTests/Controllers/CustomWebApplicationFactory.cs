@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using TransactionService.Data;
+using TransactionService.Entities;
 using TransactionService.Models;
 using Xunit.Extensions.Logging;
 
@@ -44,8 +45,6 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
             db.Database.EnsureCreated();
             db.Accounts.RemoveRange(db.Accounts);
-            db.Database.ExecuteSqlRaw("ALTER SEQUENCE \"Accounts_ID_seq\" RESTART WITH 1;");
-            db.Database.ExecuteSqlRaw("ALTER SEQUENCE \"AccountData_ID_seq\" RESTART WITH 1;");
 
             SeedDatabase(db);
         });
@@ -55,37 +54,19 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
     private void SeedDatabase(FinanceContext context)
     {
-        context.Accounts.AddRange(new List<Account>()
+        context.Accounts.AddRange(new List<AccountEntity>()
         {
-            new Account
+            new AccountEntity()
             {
                 FullName = "Nils Meijer",
                 Email = "test@gmail.com",
-                Password = "testpassword123",
-                PhoneNumber = "0612345678",
-                Data = new List<AccountData>()
-                {
-                    new AccountData()
-                    {
-                        Balance = 100.0f,
-                        Type = AccountType.Student
-                    }
-                }
+                PhoneNumber = "0612345678"
             },
-            new Account()
+            new AccountEntity()
             {
                 FullName = "Henk Jansen",
                 Email = "test@gmail.com",
-                Password = "testpassword123",
-                PhoneNumber = "0612345678",
-                Data = new List<AccountData>()
-                {
-                    new AccountData()
-                    {
-                        Balance = 200.0f,
-                        Type = AccountType.Youth
-                    }
-                }
+                PhoneNumber = "0612345678"
             }
         });
 

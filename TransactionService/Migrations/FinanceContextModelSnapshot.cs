@@ -22,66 +22,29 @@ namespace TransactionService.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("TransactionService.Models.Account", b =>
+            modelBuilder.Entity("TransactionService.Entities.AccountEntity", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Relational:JsonPropertyName", "id");
+                        .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasAnnotation("Relational:JsonPropertyName", "email");
+                        .HasColumnType("text");
 
                     b.Property<string>("FullName")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasAnnotation("Relational:JsonPropertyName", "fullName");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasAnnotation("Relational:JsonPropertyName", "password");
+                        .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasAnnotation("Relational:JsonPropertyName", "phoneNumber");
+                        .HasColumnType("text");
 
                     b.HasKey("ID");
 
                     b.ToTable("Accounts");
-                });
-
-            modelBuilder.Entity("TransactionService.Models.AccountData", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Relational:JsonPropertyName", "id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
-
-                    b.Property<int>("AccountID")
-                        .HasColumnType("integer")
-                        .HasAnnotation("Relational:JsonPropertyName", "accountID");
-
-                    b.Property<float>("Balance")
-                        .HasColumnType("real")
-                        .HasAnnotation("Relational:JsonPropertyName", "balance");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("integer")
-                        .HasAnnotation("Relational:JsonPropertyName", "type");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("AccountID");
-
-                    b.ToTable("AccountData");
                 });
 
             modelBuilder.Entity("TransactionService.Models.Password", b =>
@@ -105,20 +68,6 @@ namespace TransactionService.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("HashedPasswords");
-                });
-
-            modelBuilder.Entity("TransactionService.Models.AccountData", b =>
-                {
-                    b.HasOne("TransactionService.Models.Account", null)
-                        .WithMany("Data")
-                        .HasForeignKey("AccountID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("TransactionService.Models.Account", b =>
-                {
-                    b.Navigation("Data");
                 });
 #pragma warning restore 612, 618
         }
