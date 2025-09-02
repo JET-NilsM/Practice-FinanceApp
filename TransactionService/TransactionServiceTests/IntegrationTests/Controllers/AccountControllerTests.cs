@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
+using TransactionService.DTO;
 using TransactionService.Models;
 using Xunit.Abstractions;
 using Xunit.Extensions.Logging;
@@ -49,7 +50,7 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
     [Fact]
     public async Task CreateAccount_ReturnsCreated()
     {
-        Account newAccount = new Account()
+        AccountDTO newAccount = new AccountDTO()
         {
             FullName = "John Doe",
             Email = "john.doe@gmail.com",
@@ -61,7 +62,7 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
         
         HttpResponseMessage response = await _client.PostAsync("/api/account", stringContent);
         
-        var returnedAccount = await response.Content.ReadFromJsonAsync<Account>();
+        var returnedAccount = await response.Content.ReadFromJsonAsync<AccountDTO>();
         
         Assert.NotNull(returnedAccount);
         Assert.Equal(newAccount.FullName, returnedAccount.FullName);
@@ -77,7 +78,7 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
     [Fact]
     public async Task CreateAccount_InvalidEmail_ReturnsBadRequest()
     {
-        Account newAccount = new Account()
+        AccountModel newAccountModel = new AccountModel()
         {
             FullName = "Jane Doe",
             Email = "invalid-email",
@@ -85,7 +86,7 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
             PhoneNumber = "0612345678"
         };
         
-        var stringContent = new StringContent(JsonSerializer.Serialize(newAccount), Encoding.UTF8, "application/json");
+        var stringContent = new StringContent(JsonSerializer.Serialize(newAccountModel), Encoding.UTF8, "application/json");
         
         HttpResponseMessage response = await _client.PostAsync("/api/account", stringContent);
         
@@ -99,7 +100,7 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
         
         response.EnsureSuccessStatusCode();
         
-        var account = await response.Content.ReadFromJsonAsync<Account>();
+        var account = await response.Content.ReadFromJsonAsync<AccountModel>();
         
         Assert.NotNull(account);
         Assert.Equal("Nils Meijer", account.FullName);
@@ -120,7 +121,7 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
         
         response.EnsureSuccessStatusCode();
         
-        var accounts = await response.Content.ReadFromJsonAsync<List<Account>>();
+        var accounts = await response.Content.ReadFromJsonAsync<List<AccountModel>>();
         
         Assert.NotNull(accounts);
         Assert.Contains(accounts, a => a.FullName == "Nils Meijer");
@@ -132,20 +133,12 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
     [Fact]
     public async Task PutAccount_DoesNotExist_ReturnNotFound()
     {
-        Account newData = new Account
+        AccountModel newData = new AccountModel
         {
             FullName = "Updated Name",
             Email = "test@gmail.com",
             Password = "password123",
-            PhoneNumber = "+31 6 12345678",
-            Data = new List<AccountData>()
-            {
-                new AccountData
-                {
-                    Balance = 100.0f,
-                    Type = AccountType.Student
-                }
-            }
+            PhoneNumber = "+31 6 12345678"
         };
         
         var json = JsonSerializer.Serialize(newData);
@@ -179,7 +172,7 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
     {
         var patchData = new Dictionary<string, object>()
         {
-            { "FullName", "Updated Name" },
+            { "FullName", "Updated Name" }
         };
         
         var json = JsonSerializer.Serialize(patchData);
@@ -197,7 +190,7 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
     {
         var patchData = new Dictionary<string, object>()
         {
-            { "FullName", "Updated Name" },
+            { "FullName", "Updated Name" }
         };
         
         var json = JsonSerializer.Serialize(patchData);
@@ -213,7 +206,7 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
     {
         var patchData = new Dictionary<string, object>()
         {
-            { "InvalidProperty", "Invalid Value" },
+            { "InvalidProperty", "Invalid Value" }
         };
         
         var json = JsonSerializer.Serialize(patchData);

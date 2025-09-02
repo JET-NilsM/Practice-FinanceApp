@@ -1,11 +1,14 @@
 using Microsoft.EntityFrameworkCore;
+using TransactionService.Entities;
 using TransactionService.Models;
 
 namespace TransactionService.Data;
 
 public class FinanceContext : DbContext
 {
-    public DbSet<Account> Accounts { get; set; }
+    public DbSet<AccountEntity> Accounts { get; set; }
+    
+    public DbSet<Password> HashedPasswords { get; set; }
 
     public FinanceContext(DbContextOptions<FinanceContext> options) : base(options)
     {

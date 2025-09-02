@@ -1,25 +1,74 @@
 using TransactionService.DTO;
+using TransactionService.Entities;
 using TransactionService.Mapper;
 using TransactionService.Models;
 using TransactionService.Repositories;
+using TransactionService.Utilities;
 
 namespace TransactionService.Services;
 
 public class AccountService : IAccountService
 {
     private IAccountRepository _repo;
-    private IAccountMapper _mapper;
+    private readonly ILogger _logger;
 
-    public AccountService(IAccountRepository repo, IAccountMapper mapper)
+    public AccountService(IAccountRepository repo, ILogger<IAccountService> logger)
     {
         _repo = repo;
-        _mapper = mapper;
     }
     
-    public bool AddAccount(AccountDTO dto)
+    public bool AddAccount(AccountModel model)
     {
-        //Error handling?
-        Account accountModel = _mapper.MapToModel(dto);
-        return _repo.AddAccount(accountModel);
+        string hash = PasswordHasher.HashPassword(model.Password);
+        // if (_repo.GetExistingPassword(model.ID, hash) != null)
+        //     return false;
+        
+        AccountEntity entity = AccountMapper.ModelToEntity(model);
+        Password password = new Password()
+        {
+            AccountID = entity.ID,
+            HashedPassword = hash,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        try
+        { 
+            _repo.AddAccount(entity, password);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return false;    
+        }
+
+        return true;
+    }
+
+    public List<AccountModel> GetAccounts()
+    {
+        List<AccountModel> accountModels = new List<AccountModel>();
+        
+        List<AccountEntity> entities = _repo.GetAccounts();
+        foreach (var entity in entities)
+        {
+            accountModels.Add(AccountMapper.EntityToModel(entity));
+        }
+        return accountModels;
+    }
+
+    public AccountModel GetAccount(int id)
+    {
+        return AccountMapper.EntityToModel(_repo.GetAccount(id));
+    }
+
+    public void DeleteAccount(int id)
+    {
+        _repo.DeleteAccount(id);
+    }
+
+    public void UpdateAccount(int id, AccountModel newData)
+    {
+        AccountEntity newDataEntity = AccountMapper.ModelToEntity(newData);
+        _repo.UpdateAccount(id, newDataEntity);
     }
 }

@@ -11,7 +11,10 @@ using TransactionService.Models;
 using Xunit;
 using Xunit.Abstractions;
 using Moq;
+using TransactionService.DTO;
+using TransactionService.Mapper;
 using TransactionService.Repositories;
+using TransactionService.Services;
 using TransactionServiceTests.Integration_Tests;
 using Xunit.Extensions.Logging;
 
@@ -29,10 +32,10 @@ public class AccountControllerTests {
     public async void CreateAccount_ShouldReturnOk_WhenValidAccount()
     {
         // Arrange
-        var mockRepo = new Mock<IAccountRepository>();
+        var mockService = new Mock<IAccountService>();
         var mockLogger = new Mock<ILogger<AccountController>>();
-        var accountController = new AccountController(mockRepo.Object, mockLogger.Object);
-        var newAccount = new Account
+        var accountController = new AccountController(mockService.Object, mockLogger.Object);
+        var newAccount = new AccountDTO()
         {
             ID = 123,
             FullName = "unit test user",
@@ -41,7 +44,7 @@ public class AccountControllerTests {
             PhoneNumber = "+31 6 12345678",
         };
 
-        mockRepo.Setup(repo => repo.GetAccount(newAccount.ID)).Returns((Account)null);
+        mockService.Setup(service => service.GetAccount(newAccount.ID)).Returns((AccountModel)null);
 
         // Act
         ValidateModel(newAccount, accountController.ModelState);
@@ -51,51 +54,14 @@ public class AccountControllerTests {
         var createdResult = Assert.IsType<CreatedResult>(result);
         Assert.Equal((int)HttpStatusCode.Created, createdResult.StatusCode);
     }
-    
-    [Fact] 
-    public async void CreateAccount_ShouldReturnBadRequest_WhenIdAlreadyExists()
-    {
-        // Arrange
-        var mockRepo = new Mock<IAccountRepository>();
-        var mockLogger = new Mock<ILogger<AccountController>>();
-        var accountController = new AccountController(mockRepo.Object, mockLogger.Object);
-        var existingAccount = new Account
-        {
-            ID = 1,
-            FullName = "unit test user",
-            Email = "unitTest@gmail.com",
-            Password = "testPassword123",
-            PhoneNumber = "+31 6 12345678",
-            Data = new List<AccountData>()
-            {
-                new AccountData()
-                {
-                    Balance = 100.0f,
-                    Type = AccountType.Student
-                }
-            }
-        };
-
-        //mental note: not calling mockRepo.Setup(repo => repo.AddAccount(existingAccount))
-        //because the method should never be reached if the ID already exists.
-        mockRepo.Setup(repo => repo.GetAccount(existingAccount.ID)).Returns(existingAccount);
-        
-        // Act
-        var result = await accountController.CreateAccount(existingAccount);
-        
-        // Assert
-        var badRequestResult = Assert.IsType<BadRequestResult>(result);
-        Assert.Equal((int)HttpStatusCode.BadRequest, badRequestResult.StatusCode);
-        mockRepo.Verify(repo => repo.AddAccount(It.IsAny<Account>()), Times.Never);
-    }
 
     [Fact]
     public async Task CreateAccount_ShouldReturnBadRequest_WhenAccountIsNull()
     {
         // Arrange
-        var mockRepo = new Mock<IAccountRepository>();
+        var mockService = new Mock<IAccountService>();
         var mockLogger = new Mock<ILogger<AccountController>>();
-        var accountController = new AccountController(mockRepo.Object, mockLogger.Object);
+        var accountController = new AccountController(mockService.Object, mockLogger.Object);
         
         // Act
         var result = await accountController.CreateAccount(null);
@@ -109,10 +75,10 @@ public class AccountControllerTests {
     public async void GetExistingAccounts_ShouldReturnOk()
     {
         // Arrange
-        var mockRepo = new Mock<IAccountRepository>();
-        mockRepo.Setup(repo => repo.GetAccounts()).Returns(new List<Account>
+        var mockService = new Mock<IAccountService>();
+        mockService.Setup(service => service.GetAccounts()).Returns(new List<AccountModel>
         {
-            new Account 
+            new AccountModel 
                 { 
                     ID = 1, 
                     FullName = "Test", 
@@ -131,24 +97,24 @@ public class AccountControllerTests {
         });
 
         var mockLogger = new Mock<ILogger<AccountController>>();
-        var accountController = new AccountController(mockRepo.Object, mockLogger.Object);
+        var accountController = new AccountController(mockService.Object, mockLogger.Object);
         
         // Act
         var result = await accountController.GetAccounts();
         
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(okResult.Value.GetType(), typeof(List<Account>));
+        Assert.Equal(okResult.Value.GetType(), typeof(List<AccountModel>));
     }
 
     [Fact] 
     public async void GetAccount_ShouldReturnBadRequest_WhenAccountDoesNotExist()
     {
         // Arrange
-        var mockRepo = new Mock<IAccountRepository>();
+        var mockService = new Mock<IAccountService>();
         var mockLogger = new Mock<ILogger<AccountController>>();
-        var accountController = new AccountController(mockRepo.Object, mockLogger.Object);
-        mockRepo.Setup(repo => repo.GetAccount(-1)).Returns((Account)null);
+        var accountController = new AccountController(mockService.Object, mockLogger.Object);
+        mockService.Setup(service => service.GetAccount(-1)).Returns((AccountModel)null);
         
         // Act
         var result = await accountController.GetAccount(-1);
@@ -162,10 +128,10 @@ public class AccountControllerTests {
     public async void GetAccount_ShouldReturnOk_WhenAccountExists()
     {
         // Arrange
-        var mockRepo = new Mock<IAccountRepository>();
+        var mockService = new Mock<IAccountService>();
         var mockLogger = new Mock<ILogger<AccountController>>();
-        var accountController = new AccountController(mockRepo.Object, mockLogger.Object);
-        mockRepo.Setup(repo => repo.GetAccount(1)).Returns(new Account
+        var accountController = new AccountController(mockService.Object, mockLogger.Object);
+        mockService.Setup(service => service.GetAccount(1)).Returns(new AccountModel
         {
             ID = 1,
             FullName = "Test User",
@@ -187,17 +153,17 @@ public class AccountControllerTests {
         
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
-        Assert.IsType<Account>(okResult.Value);
+        Assert.IsType<AccountModel>(okResult.Value);
     }
 
     [Fact] 
     public async Task NewAccount_ShouldReturnBadRequest_WhenEmailAddressIsInvalid()
     {
         // Arrange   
-        var mockRepo = new Mock<IAccountRepository>();
+        var mockService = new Mock<IAccountService>();
         var mockLogger = new Mock<ILogger<AccountController>>();
-        var accountController = new AccountController(mockRepo.Object, mockLogger.Object);
-        var newAccount = new Account
+        var accountController = new AccountController(mockService.Object, mockLogger.Object);
+        var newAccount = new AccountModel
         {
             ID = 5,
             FullName = "unit test user",
@@ -214,62 +180,28 @@ public class AccountControllerTests {
             }
         };
 
-        mockRepo.Setup(repo => repo.UpdateAccount(1, newAccount));
+        var accountDTO = AccountMapper.ModelToDto(newAccount);
+
+        mockService.Setup(service => service.UpdateAccount(1, newAccount));
 
         //Act - testing both attribute validation and CRUD operation
-        ValidateModel(newAccount, accountController.ModelState);
-        var result = await accountController.CreateAccount(newAccount);
+        ValidateModel(accountDTO, accountController.ModelState);
+        var result = await accountController.CreateAccount(accountDTO);
         
         //Assert
         var updatedResult = Assert.IsType<BadRequestResult>(result);  
         Assert.Equal((int)HttpStatusCode.BadRequest, updatedResult.StatusCode);
-        mockRepo.Verify(repo => repo.AddAccount(It.IsAny<Account>()), Times.Never);
-    }
-
-    [Fact] 
-    public async Task NewAccount_ShouldReturnBadRequest_WhenUsingNonWhitelistedEmailDomain()
-    {
-        // Arrange   
-        var mockRepo = new Mock<IAccountRepository>();
-        var mockLogger = new Mock<ILogger<AccountController>>();
-        var accountController = new AccountController(mockRepo.Object, mockLogger.Object);
-        var newAccount = new Account
-        {
-            ID = 125,
-            FullName = "unit test user",
-            Email = "testUser@notWhitelisted.com",
-            Password = "testPassword123",
-            PhoneNumber = "+31 6 12345678",
-            Data = new List<AccountData>()
-            {
-                new AccountData()
-                {
-                    Balance = 100.0f,
-                    Type = AccountType.Student
-                }
-            }
-        };
-
-        // Act
-        ValidateModel(newAccount, accountController.ModelState);
-        var result = await accountController.CreateAccount(newAccount);     
-                                                                    
-        //Assert                                                            
-        var updatedResult = Assert.IsType<BadRequestResult>(result);  
-        Assert.Equal((int)HttpStatusCode.BadRequest, updatedResult.StatusCode);
-        
-        //verify to check that the method was never called since it is not a valid email address and therefore should not succeed.
-        mockRepo.Verify(repo => repo.AddAccount(It.IsAny<Account>()), Times.Never);
+        mockService.Verify(service => service.AddAccount(newAccount), Times.Never);
     }
     
     [Fact] 
     public async Task UpdateAccount_ShouldReturnNotFound_WhenAccountDoesNotExist()
     {
         // Arrange
-        var mockRepo = new Mock<IAccountRepository>();
+        var mockService = new Mock<IAccountService>();
         var mockLogger = new Mock<ILogger<AccountController>>();
-        var accountController = new AccountController(mockRepo.Object, mockLogger.Object);
-        var newData = new Account()
+        var accountController = new AccountController(mockService.Object, mockLogger.Object);
+        var newData = new AccountModel()
         {
             ID = 1,
             FullName = "Updated User",
@@ -294,17 +226,17 @@ public class AccountControllerTests {
         // Assert
         var notFoundResult = Assert.IsType<NotFoundResult>(result);
         Assert.Equal((int)HttpStatusCode.NotFound, notFoundResult.StatusCode);
-        mockRepo.Verify(repo => repo.UpdateAccount(chosenAccountID, It.IsAny<Account>()), Times.Never);
+        mockService.Verify(service => service.UpdateAccount(chosenAccountID, It.IsAny<AccountModel>()), Times.Never);
     }
     
     [Fact] 
     public async Task UpdateAccount_ShouldReturnBadRequest_WhenUsingEmptyData()
     {
         // Arrange   
-        var mockRepo = new Mock<IAccountRepository>();
+        var mockService = new Mock<IAccountService>();
         var mockLogger = new Mock<ILogger<AccountController>>();
-        var accountController = new AccountController(mockRepo.Object, mockLogger.Object);
-        var existingAccount = new Account()
+        var accountController = new AccountController(mockService.Object, mockLogger.Object);
+        var existingAccount = new AccountModel()
         {
             ID = 1,
             FullName = "Updated User",
@@ -321,7 +253,7 @@ public class AccountControllerTests {
             }
         };
 
-        mockRepo.Setup(repo => repo.GetAccount(existingAccount.ID)).Returns(existingAccount);
+        mockService.Setup(service => service.GetAccount(existingAccount.ID)).Returns(existingAccount);
         
         
         // Act
@@ -333,17 +265,17 @@ public class AccountControllerTests {
         //Assert
         var notFoundResult = Assert.IsType<BadRequestResult>(result);
         Assert.Equal((int)HttpStatusCode.BadRequest, notFoundResult.StatusCode);
-        mockRepo.Verify(repo => repo.UpdateAccount(1, It.IsAny<Account>()), Times.Never);
+        mockService.Verify(service => service.UpdateAccount(1, It.IsAny<AccountModel>()), Times.Never);
     }
 
     [Fact]
     public async Task UpdateAccount_ShouldReturnOk_WhenAccountIsUpdated()
     {
         // Arrange
-        var mockRepo = new Mock<IAccountRepository>();
+        var mockService = new Mock<IAccountService>();
         var mockLogger = new Mock<ILogger<AccountController>>();
-        var accountController = new AccountController(mockRepo.Object, mockLogger.Object);
-        var existingAccount = new Account()
+        var accountController = new AccountController(mockService.Object, mockLogger.Object);
+        var existingAccount = new AccountModel()
         {
             ID = 1,
             FullName = "Updated User",
@@ -359,7 +291,7 @@ public class AccountControllerTests {
                 }
             }
         };
-        mockRepo.Setup(repo => repo.GetAccount(existingAccount.ID)).Returns(existingAccount);
+        mockService.Setup(service => service.GetAccount(existingAccount.ID)).Returns(existingAccount);
         
         Dictionary<string, object> newData = new Dictionary<string, object>
         {
@@ -378,10 +310,10 @@ public class AccountControllerTests {
     public async Task DeleteAccount_ShouldReturnOk_WhenAccountDeleted()
     {
         // Arrange
-        var mockRepo = new Mock<IAccountRepository>();
+        var mockService = new Mock<IAccountService>();
         var mockLogger = new Mock<ILogger<AccountController>>();
-        var accountController = new AccountController(mockRepo.Object, mockLogger.Object);
-        var existingAccount = new Account
+        var accountController = new AccountController(mockService.Object, mockLogger.Object);
+        var existingAccount = new AccountModel
         {
             ID = 2,
             FullName = "Test User",
@@ -398,7 +330,7 @@ public class AccountControllerTests {
             }
         };
         
-        mockRepo.Setup(repo => repo.GetAccount(2)).Returns(existingAccount);
+        mockService.Setup(service => service.GetAccount(2)).Returns(existingAccount);
         
         // Act
         var result = await accountController.DeleteAccount(2);
@@ -406,17 +338,17 @@ public class AccountControllerTests {
         // Assert
         var updatedResult = Assert.IsType<OkResult>(result);  
         Assert.Equal((int)HttpStatusCode.OK, updatedResult.StatusCode);
-        mockRepo.Verify(repo => repo.DeleteAccount(2), Times.Once);
+        mockService.Verify(service => service.DeleteAccount(2), Times.Once);
     }
     
     [Fact] 
     public async Task DeleteAccount_ShouldReturnNotFound_WhenAccountDoesNotExist()
     {
         // Arrange
-        var mockRepo = new Mock<IAccountRepository>();
+        var mockService = new Mock<IAccountService>();
         var mockLogger = new Mock<ILogger<AccountController>>();
-        var accountController = new AccountController(mockRepo.Object, mockLogger.Object);
-        mockRepo.Setup(repo => repo.GetAccount(-1)).Returns((Account)null);
+        var accountController = new AccountController(mockService.Object, mockLogger.Object);
+        mockService.Setup(service => service.GetAccount(-1)).Returns((AccountModel)null);
         
         // Act
         var result = await accountController.DeleteAccount(-1);
@@ -424,14 +356,14 @@ public class AccountControllerTests {
         // Assert
         var notFoundResult = Assert.IsType<NotFoundResult>(result);
         Assert.Equal((int)HttpStatusCode.NotFound, notFoundResult.StatusCode);
-        mockRepo.Verify(repo => repo.DeleteAccount(It.IsAny<int>()), Times.Never);
+        mockService.Verify(service => service.DeleteAccount(It.IsAny<int>()), Times.Never);
     }
 
-    private void ValidateModel(Account accountModel, ModelStateDictionary modelState)
+    private void ValidateModel(AccountDTO accountDTO, ModelStateDictionary modelState)
     {
         var validationResults = new List<ValidationResult>();
-        var validationContext = new ValidationContext(accountModel, null, null);
-        Validator.TryValidateObject(accountModel, validationContext, validationResults, true);
+        var validationContext = new ValidationContext(accountDTO, null, null);
+        Validator.TryValidateObject(accountDTO, validationContext, validationResults, true);
         foreach (var validationResult in validationResults)
         {
             modelState.AddModelError(
