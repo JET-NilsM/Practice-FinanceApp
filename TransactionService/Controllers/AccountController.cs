@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TransactionService.Data;
 using TransactionService.DTO;
+using TransactionService.Mapper;
 using TransactionService.Models;
 using TransactionService.Repositories;
 using TransactionService.Services;
@@ -12,36 +13,32 @@ namespace TransactionService.Controllers;
 [Route("api/[controller]")]
 public class AccountController : ControllerBase
 {
-    private IAccountRepository _repo;
     private IAccountService _service;
     private readonly ILogger _logger;
 
-    public AccountController(IAccountRepository repo, ILogger<AccountController> logger)
+    public AccountController(IAccountService service, ILogger<AccountController> logger)
     {
-        _repo = repo;
+        _service = service;
         _logger = logger;
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateAccount(Account incomingData)
+    public async Task<IActionResult> CreateAccount(AccountDTO? incomingData)
     {
         _logger.LogInformation("---- Reached the PUT account method ----");
 
         if (!ModelState.IsValid)
             return BadRequest(); 
 
-        AccountDTO newAccount = new AccountDTO()
-        {
-            ID = incomingData.ID,
-            FullName = incomingData.FullName,
-            Email = incomingData.Email,
-            PhoneNumber = incomingData.PhoneNumber
-        };
-
-        if (!_service.AddAccount(newAccount, incomingData.Password))
+        if(incomingData == null)
             return BadRequest();
 
-        return Created($"/api/account/{newAccount.ID}", newAccount);
+        AccountModel newAccountModel = AccountMapper.DtoToModel(incomingData);
+
+        if (_service.AddAccount(newAccountModel))
+            return BadRequest();
+
+        return Created("/api/account", newAccountModel);
     }
 
     [HttpGet("{id:int}")]
@@ -49,11 +46,11 @@ public class AccountController : ControllerBase
     {
         _logger.LogInformation("---- Reached the GET account method ----");
 
-        Account selectedAccount = _repo.GetAccount(id);
-        if (selectedAccount == null)
+        AccountModel selectedAccountModel = _service.GetAccount(id);
+        if (selectedAccountModel == null)
             return NotFound();
 
-        return Ok(selectedAccount);
+        return Ok(selectedAccountModel);
     }
 
     [HttpGet]
@@ -61,7 +58,7 @@ public class AccountController : ControllerBase
     {
         _logger.LogInformation("---- Reached the GET accounts method ----");
 
-        List<Account> accounts = _repo.GetAccounts();
+        List<AccountModel> accounts = _service.GetAccounts();
         if (accounts == null)
             return NotFound();
 
@@ -72,17 +69,17 @@ public class AccountController : ControllerBase
     }
 
     [HttpPut("{givenID:int}")]
-    public async Task<IActionResult> UpdateAccount(int givenID, Account newAccountData)
+    public async Task<IActionResult> UpdateAccount(int givenID, AccountModel newAccountModelData)
     {
         _logger.LogInformation("---- Reached the PUT account method ----");
 
-        Account selectedAccount = _repo.GetAccount(givenID);
-        if (selectedAccount == null)
+        AccountModel selectedAccountModel = _service.GetAccount(givenID);
+        if (selectedAccountModel == null)
             return NotFound();
 
-        _repo.UpdateAccount(givenID, newAccountData);
+        _service.UpdateAccount(givenID, newAccountModelData);
 
-        return Ok(newAccountData);
+        return Ok(newAccountModelData);
     }
 
     [HttpPatch("{givenID:int}")]
@@ -90,8 +87,8 @@ public class AccountController : ControllerBase
     {
         _logger.LogInformation("---- Reached the PATCH account method ----");
 
-        Account updatedAccount = _repo.GetAccount(givenID);
-        if (updatedAccount == null)
+        AccountModel updatedAccountModel = _service.GetAccount(givenID);
+        if (updatedAccountModel == null)
             return NotFound();
 
         if (!newData.Any())
@@ -101,7 +98,7 @@ public class AccountController : ControllerBase
 
         foreach (var dataEntry in newData)
         {
-            object? convertedValue = AccountHelper.ConvertToProperty(dataEntry, updatedAccount);
+            object? convertedValue = AccountHelper.ConvertToProperty(dataEntry, updatedAccountModel);
 
             if (convertedValue == null)
                 return BadRequest();
@@ -118,11 +115,11 @@ public class AccountController : ControllerBase
     {
         _logger.LogInformation("---- Reached the DELETE account method ----");
 
-        Account selectedAccount = _repo.GetAccount(id);
-        if (selectedAccount == null)
+        AccountModel selectedAccountModel = _service.GetAccount(id);
+        if (selectedAccountModel == null)
             return NotFound();
 
-        _repo.DeleteAccount(id);
+        _service.DeleteAccount(id);
 
         return Ok();
     }

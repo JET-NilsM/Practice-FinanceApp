@@ -25,7 +25,7 @@ public static class PasswordHasher
 
         //Combine the hash and salt into one array, where the salt is placed at index 0 and the hash is placed after the salt.
         var combinedBytes = new byte[salt.Length + hash.Length];
-        Array.Copy(salt, 0, combinedBytes, 0, hash.Length);
+        Array.Copy(salt, 0, combinedBytes, 0, salt.Length);
         Array.Copy(hash, 0, combinedBytes, salt.Length, hash.Length);
 
         return Convert.ToBase64String(combinedBytes);
