@@ -5,10 +5,10 @@ namespace TransactionService.Utilities;
 
 public static class AccountHelper
 {
-    public static Object? ConvertToProperty(KeyValuePair<string, object> dataEntry, Account account)
+    public static Object? ConvertToProperty(KeyValuePair<string, object> dataEntry, AccountModel accountModel)
     {
         // Check if the property exists in the model
-        var property = typeof(Account).GetProperty(dataEntry.Key);
+        var property = typeof(AccountModel).GetProperty(dataEntry.Key);
         if (property == null || !property.CanWrite)
         {
             return null;
@@ -35,7 +35,7 @@ public static class AccountHelper
         }
 
         Console.WriteLine($"Value: {convertedValue}");
-        property.SetValue(account, convertedValue);
+        property.SetValue(accountModel, convertedValue);
 
         return convertedValue;
     }
