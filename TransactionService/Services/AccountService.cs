@@ -58,7 +58,12 @@ public class AccountService : IAccountService
 
     public AccountModel GetAccount(int id)
     {
-        return AccountMapper.EntityToModel(_repo.GetAccount(id));
+        AccountEntity accountEntity = _repo.GetAccount(id);
+        if (accountEntity == null)
+            return null;
+        
+        AccountModel accountModel = AccountMapper.EntityToModel(accountEntity);
+        return accountModel;
     }
 
     public void DeleteAccount(int id)

@@ -52,10 +52,11 @@ public class AccountController : ControllerBase
         _logger.LogInformation("---- Reached the GET account method ----");
 
         AccountModel selectedAccountModel = _service.GetAccount(id);
-        if (selectedAccountModel == null)
+        if(selectedAccountModel == null)
             return NotFound();
+        AccountDTO accountDto = AccountMapper.ModelToDto(selectedAccountModel);
 
-        return Ok(selectedAccountModel);
+        return Ok(accountDto);
     }
 
     [HttpGet]

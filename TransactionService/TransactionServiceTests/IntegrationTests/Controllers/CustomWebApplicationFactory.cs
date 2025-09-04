@@ -45,7 +45,11 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
             db.Database.EnsureCreated();
             db.Accounts.RemoveRange(db.Accounts);
-
+            db.HashedPasswords.RemoveRange(db.HashedPasswords);
+            
+            //TODO fix naming inconsistency (ID/Id)
+            db.Database.ExecuteSqlRaw("ALTER SEQUENCE \"Accounts_ID_seq\" RESTART WITH 1;");
+            db.Database.ExecuteSqlRaw("ALTER SEQUENCE \"HashedPasswords_Id_seq\" RESTART WITH 1;");
             SeedDatabase(db);
         });
         

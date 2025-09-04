@@ -12,10 +12,12 @@ namespace TransactionService.Repositories;
 public class AccountRepository : IAccountRepository
 {
     private FinanceContext _context;
+    private readonly ILogger _logger;
     
-    public AccountRepository(FinanceContext context)
+    public AccountRepository(FinanceContext context, ILogger<AccountRepository> logger)
     {
         _context = context;
+        _logger = logger;
     }
     
     public List<AccountEntity> GetAccounts()
@@ -25,10 +27,18 @@ public class AccountRepository : IAccountRepository
 
     public AccountEntity GetAccount(int id)
     {
-        AccountEntity account = _context.Accounts.Find(id);
-        if (account != null)
-            return account;
-        return null;
+        AccountEntity accountEntity;
+        try
+        {
+            accountEntity = _context.Accounts.Find(id);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Error when retrieving account: " + e.Message);
+            return null;
+        }
+
+        return accountEntity;
     }
     
     public AccountEntity AddAccount(AccountEntity entity, Password hashedPassword)
