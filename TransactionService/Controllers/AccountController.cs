@@ -39,10 +39,11 @@ public class AccountController : ControllerBase
 
         AccountModel newAccountModel = AccountMapper.DtoToModel(incomingData);
 
-        if (_service.AddAccount(newAccountModel))
+        if (!_service.AddAccount(newAccountModel))
             return BadRequest();
 
-        return Created("/api/account", newAccountModel);
+        AccountDTO accountDto = AccountMapper.ModelToDto(newAccountModel);
+        return Created("/api/account", accountDto);
     }
 
     [HttpGet("{id:int}")]

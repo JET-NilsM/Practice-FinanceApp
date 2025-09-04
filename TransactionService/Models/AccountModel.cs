@@ -14,7 +14,7 @@ public class AccountModel
     [JsonPropertyName("email")] [Required] [EmailValidation] public string Email { get; set; }
     [JsonPropertyName("password")] public string Password { get; set; }
     [JsonPropertyName("phoneNumber")] public string PhoneNumber { get; set; }
-    public ICollection<AccountData> Data { get; set; } = new List<AccountData>();
+    public ICollection<int> Data { get; set; } = new List<int>();
 }
 
 public enum AccountType

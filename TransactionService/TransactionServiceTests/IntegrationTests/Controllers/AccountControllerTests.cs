@@ -67,7 +67,6 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
         Assert.NotNull(returnedAccount);
         Assert.Equal(newAccount.FullName, returnedAccount.FullName);
         Assert.Equal(newAccount.Email, returnedAccount.Email);
-        Assert.Equal(newAccount.Password, returnedAccount.Password);
         Assert.Equal(newAccount.PhoneNumber, returnedAccount.PhoneNumber);
     }
     
