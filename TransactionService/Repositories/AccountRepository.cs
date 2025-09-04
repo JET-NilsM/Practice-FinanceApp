@@ -87,8 +87,7 @@ public class AccountRepository : IAccountRepository
             Console.WriteLine("Error occured when saving to database: " + e);
             return false;
         }
-
-
+        
         return true;
     }
 

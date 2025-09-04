@@ -37,7 +37,7 @@ public class AccountService : IAccountService
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError("Error when adding account: " + e.Message);
             return false;    
         }
 
