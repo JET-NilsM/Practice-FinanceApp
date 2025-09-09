@@ -25,7 +25,7 @@ public class AccountRepository : IAccountRepository
         return _context.Accounts.ToList();
     }
 
-    public AccountEntity GetAccount(int id)
+    public AccountEntity? GetAccount(int id)
     {
         AccountEntity accountEntity;
         try
@@ -41,7 +41,7 @@ public class AccountRepository : IAccountRepository
         return accountEntity;
     }
     
-    public AccountEntity AddAccount(AccountEntity entity, Password hashedPassword)
+    public AccountEntity? AddAccount(AccountEntity entity, Password hashedPassword)
     {
         _context.HashedPasswords.Add(hashedPassword);       
         _context.Accounts.Add(entity);
@@ -61,26 +61,36 @@ public class AccountRepository : IAccountRepository
         Save();
     }
 
-    public void UpdateAccount(int id, AccountEntity newData)
+    public AccountEntity? UpdateAccount(int id, AccountEntity newData)
     {
         var account = _context.Accounts.Find(id);
-        if (account == null) 
-            return;
+        if (account == null)
+            return null;
         
         account.FullName = newData.FullName;
         account.Email = newData.Email;
         account.PhoneNumber = newData.PhoneNumber;
 
-        Save();
+        if(Save())
+            return account;
+        return null;
     }
 
-    public Password? GetExistingPassword(int accountID, string incomingHash)
+    public Password? GetExistingPassword(int accountID, Password password)
     {
-        var oldPasswordsForAccount = _context.HashedPasswords.Where(stored => stored.AccountID == accountID);
-        foreach (var password in oldPasswordsForAccount)
+        try
         {
-            if (password.HashedPassword == incomingHash)
-                return password;
+            var oldPasswordsForAccount = _context.HashedPasswords.Where(stored => stored.AccountID == accountID);
+            foreach (var existingPassword in oldPasswordsForAccount)
+            {
+                if (existingPassword.HashedPassword == password.HashedPassword)
+                    return password;
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Error when retrieving existing password: " + e.Message);
+            return null;
         }
 
         return null;

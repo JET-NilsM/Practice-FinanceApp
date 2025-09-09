@@ -85,13 +85,9 @@ public class AccountControllerTests {
                     Email = "test@gmail.com", 
                     Password = "password123", 
                     PhoneNumber = "0621345637", 
-                    Data = new List<AccountData>()
+                    Data = new List<int>
                     {
-                        new AccountData()
-                        {
-                            Balance = 100.0f,
-                            Type = AccountType.Student
-                        }
+                        1,2
                     }
                 }
         });
@@ -138,13 +134,9 @@ public class AccountControllerTests {
             Email = "test@gmail.com",
             Password = "password123",
             PhoneNumber = "+31 6 12345678",
-            Data = new List<AccountData>()
+            Data = new List<int>
             {
-                new AccountData()
-                {
-                    Balance = 100.0f,
-                    Type = AccountType.Student
-                }
+                1,2
             }
         });
         
@@ -170,13 +162,18 @@ public class AccountControllerTests {
             Email = "invalidAddress",
             Password = "testPassword123",
             PhoneNumber = "+31 6 12345678",
-            Data = new List<AccountData>()
+            Data = new List<int>
             {
-                new AccountData()
-                {
-                    Balance = 100.0f,
-                    Type = AccountType.Student
-                }
+                1,2
+            }
+        };
+
+        var accountData = new List<AccountData>()
+        {
+            new AccountData()
+            {
+                Balance = 100.0f,
+                Type = AccountType.Student
             }
         };
 
@@ -201,21 +198,12 @@ public class AccountControllerTests {
         var mockService = new Mock<IAccountService>();
         var mockLogger = new Mock<ILogger<AccountController>>();
         var accountController = new AccountController(mockService.Object, mockLogger.Object);
-        var newData = new AccountModel()
+        var newData = new AccountDTO()
         {
-            ID = 1,
             FullName = "Updated User",
             Email = "test@gmail.com",
             Password = "newPassword123",
             PhoneNumber = "+31 6 12345678",
-            Data = new List<AccountData>()
-            {
-                new AccountData()
-                {
-                    Balance = 100.0f,
-                    Type = AccountType.Student
-                }
-            }
         };
 
         var chosenAccountID = -1;
@@ -243,13 +231,9 @@ public class AccountControllerTests {
             Email = "test@gmail.com",
             Password = "newPassword123",
             PhoneNumber = "+31 6 12345678",
-            Data = new List<AccountData>()
+            Data = new List<int>
             {
-                new AccountData()
-                {
-                    Balance = 100.0f,
-                    Type = AccountType.Student
-                }
+                1,2
             }
         };
 
@@ -282,13 +266,9 @@ public class AccountControllerTests {
             Email = "test@gmail.com",
             Password = "newPassword123",
             PhoneNumber = "+31 6 12345678",
-            Data = new List<AccountData>()
+            Data = new List<int>
             {
-                new AccountData()
-                {
-                    Balance = 100.0f,
-                    Type = AccountType.Student
-                }
+                1,2
             }
         };
         mockService.Setup(service => service.GetAccount(existingAccount.ID)).Returns(existingAccount);
@@ -320,13 +300,8 @@ public class AccountControllerTests {
             Email = "test@gmail.com",
             Password = "password123",
             PhoneNumber = "+31 6 12345678",
-            Data = new List<AccountData>()
-            {
-                new AccountData()
-                {
-                    Balance = 100.0f,
-                    Type = AccountType.Student
-                }
+            Data = new List<int>{
+                1,2
             }
         };
         

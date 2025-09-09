@@ -19,21 +19,14 @@ public class AccountService : IAccountService
     
     public bool AddAccount(AccountModel model)
     {
-        string hash = PasswordHasher.HashPassword(model.Password);
-        // if (_repo.GetExistingPassword(model.ID, hash) != null)
-        //     return false;
-        
+        Password hashedPasswordData = PasswordHasher.HashPassword(model.Password);
         AccountEntity entity = AccountMapper.ModelToEntity(model);
-        Password password = new Password()
-        {
-            AccountID = entity.ID,
-            HashedPassword = hash,
-            CreatedAt = DateTime.UtcNow
-        };
+        hashedPasswordData.AccountID = entity.ID;
+        hashedPasswordData.CreatedAt = DateTime.Now;
 
         try
         { 
-            _repo.AddAccount(entity, password);
+            _repo.AddAccount(entity, hashedPasswordData);
         }
         catch (Exception e)
         {
@@ -56,7 +49,7 @@ public class AccountService : IAccountService
         return accountModels;
     }
 
-    public AccountModel GetAccount(int id)
+    public AccountModel? GetAccount(int id)
     {
         AccountEntity accountEntity = _repo.GetAccount(id);
         if (accountEntity == null)
@@ -66,14 +59,38 @@ public class AccountService : IAccountService
         return accountModel;
     }
 
-    public void DeleteAccount(int id)
+    public bool DeleteAccount(int id)
     {
-        _repo.DeleteAccount(id);
+        try
+        {
+            _repo.DeleteAccount(id);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error when deleting account: " + e.Message);
+            return false;
+        }
+
+        return true;
     }
 
-    public void UpdateAccount(int id, AccountModel newData)
+    public bool UpdateAccount(int id, AccountModel newData)
     {
-        AccountEntity newDataEntity = AccountMapper.ModelToEntity(newData);
-        _repo.UpdateAccount(id, newDataEntity);
+        try
+        {
+            Password password = PasswordHasher.HashPassword(newData.Password);
+            if (_repo.GetExistingPassword(id, password) != null)
+                return false;
+            
+            AccountEntity newDataEntity = AccountMapper.ModelToEntity(newData);
+            _repo.UpdateAccount(id, newDataEntity);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error when updating account: " + e.Message);
+            return false;
+        }
+
+        return true;
     }
 }

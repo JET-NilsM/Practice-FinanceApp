@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using Konscious.Security.Cryptography;
+using TransactionService.Models;
 
 namespace TransactionService.Utilities;
 
@@ -10,9 +11,9 @@ public static class PasswordHasher
     private const int HashSize = 32;
     private const int DegreeOfParallelism = 8;
     private const int Iterations = 4;
-    private const int MemorySize = 1024 * 1024;
+    private const int MemorySize = 1024 * 64; // 64 MB
     
-    public static string HashPassword(string password)
+    public static Password HashPassword(string password)
     {
         //generate the salt and hash
         byte[] salt = new byte[SaltSize];
@@ -28,7 +29,13 @@ public static class PasswordHasher
         Array.Copy(salt, 0, combinedBytes, 0, salt.Length);
         Array.Copy(hash, 0, combinedBytes, salt.Length, hash.Length);
 
-        return Convert.ToBase64String(combinedBytes);
+        Password newPassword = new Password()
+        {
+            HashedPassword = Convert.ToBase64String(hash),
+            Salt = Convert.ToBase64String(salt),
+            CreatedAt = DateTime.UtcNow
+        };
+        return newPassword;
     }
 
     private static byte[] HashPassword(string password, byte[] salt)

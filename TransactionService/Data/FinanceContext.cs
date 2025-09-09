@@ -8,6 +8,8 @@ public class FinanceContext : DbContext
 {
     public DbSet<AccountEntity> Accounts { get; set; }
     
+    public DbSet<AccountData> AccountData { get; set; }
+    
     public DbSet<Password> HashedPasswords { get; set; }
 
     public FinanceContext(DbContextOptions<FinanceContext> options) : base(options)
