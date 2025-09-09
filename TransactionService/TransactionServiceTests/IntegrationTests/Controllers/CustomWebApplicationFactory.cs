@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using TransactionService.Data;
 using TransactionService.Entities;
 using TransactionService.Models;
+using TransactionService.Utilities;
 using Xunit.Extensions.Logging;
 
 namespace TransactionServiceTests.Integration_Tests;
@@ -73,8 +74,13 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 PhoneNumber = "0612345678"
             }
         });
+        
+        context.HashedPasswords.AddRange(new List<Password>()
+        {
+            PasswordHasher.HashPassword("ExistingPassword"),
+            PasswordHasher.HashPassword("TestPassword1")
+        });
 
         context.SaveChanges();
     }
-    
 }

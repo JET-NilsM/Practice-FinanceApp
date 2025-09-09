@@ -77,7 +77,7 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
     [Fact]
     public async Task CreateAccount_InvalidEmail_ReturnsBadRequest()
     {
-        AccountModel newAccountModel = new AccountModel()
+        AccountDTO newAccountModel = new AccountDTO()
         {
             FullName = "Jane Doe",
             Email = "invalid-email",
@@ -132,7 +132,7 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
     [Fact]
     public async Task PutAccount_DoesNotExist_ReturnNotFound()
     {
-        AccountModel newData = new AccountModel
+        AccountDTO newData = new AccountDTO
         {
             FullName = "Updated Name",
             Email = "test@gmail.com",
@@ -185,7 +185,7 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
 
     //patch account should return notfound if account does not exist
     [Fact]
-    public async Task? PatchAccount_AccountDoesNotExist_ReturnNotFound()
+    public async Task PatchAccount_AccountDoesNotExist_ReturnNotFound()
     {
         var patchData = new Dictionary<string, object>()
         {
@@ -211,6 +211,25 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
         var json = JsonSerializer.Serialize(patchData);
         var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
         var response = await _client.PatchAsync("/api/account/1", stringContent);
+        
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+    
+    //Invalid password (already exists for user) should return badrequest
+    [Fact]
+    public async Task PatchAccount_ExistingPassword_ReturnsBadRequest()
+    {
+        AccountDTO newAccountModel = new AccountDTO()
+        {
+            FullName = "Jane Doe",
+            Email = "janeDoe@gmail.com",
+            Password = "ExistingPassword",
+            PhoneNumber = "0612345678"
+        };
+        
+        var stringContent = new StringContent(JsonSerializer.Serialize(newAccountModel), Encoding.UTF8, "application/json");
+        
+        HttpResponseMessage response = await _client.PatchAsync($"/api/account/1", stringContent);
         
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }

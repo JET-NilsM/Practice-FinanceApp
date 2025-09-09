@@ -75,7 +75,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPut("{givenID:int}")]
-    public async Task<IActionResult> UpdateAccount(int givenID, AccountModel newAccountModelData)
+    public async Task<IActionResult> UpdateAccount(int givenID, AccountDTO accountDto)
     {
         _logger.LogInformation("---- Reached the PUT account method ----");
 
@@ -83,9 +83,11 @@ public class AccountController : ControllerBase
         if (selectedAccountModel == null)
             return NotFound();
 
-        _service.UpdateAccount(givenID, newAccountModelData);
+        AccountModel accountModel = AccountMapper.DtoToModel(accountDto);
+        if(!_service.UpdateAccount(givenID, accountModel))
+            return BadRequest();
 
-        return Ok(newAccountModelData);
+        return Ok(accountDto);
     }
 
     [HttpPatch("{givenID:int}")]
@@ -93,25 +95,37 @@ public class AccountController : ControllerBase
     {
         _logger.LogInformation("---- Reached the PATCH account method ----");
 
-        AccountModel updatedAccountModel = _service.GetAccount(givenID);
-        if (updatedAccountModel == null)
+        AccountModel? existingAccountModel = _service.GetAccount(givenID);
+        if (existingAccountModel == null)
             return NotFound();
 
         if (!newData.Any())
             return BadRequest();
-
-        string allDictionaryContents = "";
-
+        
+        AccountDTO accountDto = AccountMapper.ModelToDto(existingAccountModel);
         foreach (var dataEntry in newData)
         {
-            object? convertedValue = AccountHelper.ConvertToProperty(dataEntry, updatedAccountModel);
+            if (dataEntry.Key == "ID")
+                continue;
+
+            object? convertedValue;
+            try
+            {
+                convertedValue = AccountHelper.ConvertToProperty(dataEntry, accountDto);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error converting property: " + ex.Message);
+                return BadRequest();
+            }
 
             if (convertedValue == null)
-                return BadRequest();
-
-            //Just for debugging to check if the dictionary is being processed correctly from Insomnia > controller
-            allDictionaryContents += $"{dataEntry.Key}: {convertedValue}\n";
+                return BadRequest(); 
         }
+        
+        AccountModel newAccountModel = AccountMapper.DtoToModel(accountDto);
+        if(!_service.UpdateAccount(givenID, newAccountModel))
+            return BadRequest();
 
         return Ok();
     }

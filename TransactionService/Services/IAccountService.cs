@@ -7,7 +7,7 @@ public interface IAccountService
 { 
     bool AddAccount(AccountModel model);
     List<AccountModel> GetAccounts();
-    AccountModel GetAccount(int id);
-    void DeleteAccount(int id);
-    void UpdateAccount(int id, AccountModel model);
+    AccountModel? GetAccount(int id);
+    bool DeleteAccount(int id);
+    bool UpdateAccount(int id, AccountModel model);
 }
