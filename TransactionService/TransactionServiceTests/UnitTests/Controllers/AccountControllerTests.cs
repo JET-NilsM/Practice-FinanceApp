@@ -16,7 +16,6 @@ using TransactionService.Mapper;
 using TransactionService.Repositories;
 using TransactionService.Services;
 using TransactionServiceTests.Integration_Tests;
-using Xunit.Extensions.Logging;
 
 namespace TransactionServiceTests.UnitTests;
 

@@ -9,7 +9,6 @@ using TransactionService.Data;
 using TransactionService.Entities;
 using TransactionService.Models;
 using TransactionService.Utilities;
-using Xunit.Extensions.Logging;
 
 namespace TransactionServiceTests.Integration_Tests;
 

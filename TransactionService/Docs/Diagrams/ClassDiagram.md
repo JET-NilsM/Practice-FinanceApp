@@ -4,9 +4,6 @@ direction TB
     class User {
     }
 
-    class ControllerBase {
-    }
-
     class AccountController {
 	    +CreateAccount()
 	    +GetAccount(int id)
@@ -66,11 +63,13 @@ direction TB
 	<<enumeration>> AccountType
 	<<interface>> IAccountRepository
 
-    IAccountRepository <|.. AccountRepository
-    Account <|-- AccountRepository : operates on
-    DbContext <-- FinanceContext
-    FinanceContext <-- AccountRepository : manages
-    Account <|-- AccountRepository
+    AccountController --> IAccountService : depends on
+    IAccountService --> IAccountRepository : depends on
+    
+    AccountController --> AccountDTO : uses
+    AccountService --> AccountModel : uses
+    AccountRepository --> AccountEntity : uses
+    
     User --> AccountController : GET
     User --> AccountController : POST
     User --> AccountController : PUT

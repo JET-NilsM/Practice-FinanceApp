@@ -3,19 +3,21 @@ sequenceDiagram
     actor User
 
         User->>AccountController: HttpPost Account
-        alt Check model state != valid
+        alt Check DTO state != valid
         AccountController->>User: Return BadRequest()
         end
-        AccountController->>AccountRepository: AddAccount(Account)
-        AccountRepository->>FinanceContext: Accounts.Add() 
-        AccountRepository->>FinanceContext : Save()
+        AccountController->>AccountService: AddAccount(DTO)
+        AccountService->>AccountRepository: AddAccount(Model)
+        AccountRepository->>FinanceContext : Accounts.Add(Entity)
         FinanceContext-->>AccountRepository : saveSuccessful
         
         alt Has saved?
-        AccountRepository-->>AccountController : saveSuccessful == false
+        AccountRepository-->>AccountService : saveSuccessful == false
+        AccountService-->>AccountController : saveSuccessful == false
         AccountController-->>User : return BadRequest()
-        else 
-            AccountRepository-->>AccountController : saveSuccessful = true
+        else
+            AccountRepository-->>AccountService : saveSuccessful = true
+            AccountService-->>AccountController : saveSuccessful = true
             AccountController-->>User : Return Created(newAccount)
         end
         
