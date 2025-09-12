@@ -14,6 +14,7 @@ using Moq;
 using TransactionService.Mapper;
 using TransactionService.Repositories;
 using TransactionService.Services;
+using TransactionService.Utilities;
 using TransactionServiceTests.Integration_Tests;
 using Xunit.Extensions.Logging;
 
@@ -312,6 +313,29 @@ public class AccountControllerTests {
         var updatedResult = Assert.IsType<OkResult>(result);  
         Assert.Equal((int)HttpStatusCode.OK, updatedResult.StatusCode);
         mockService.Verify(service => service.DeleteAccount(2), Times.Once);
+    }
+
+    [Fact]
+    public async Task VerifyPassword_ShouldReturnBadRequest_WhenPasswordIsDifferent()
+    {
+        var password = "testPassword123";
+        var differentPassword = "differentPassword456";
+        var hashedPassword = PasswordHasher.HashPassword(password);
+        
+        var result = PasswordHasher.VerifyPassword(differentPassword, hashedPassword.HashedPassword);
+        
+        Assert.False(result);
+    }
+    
+    [Fact]
+    public async Task VerifyPassword_ShouldReturnOk_WhenPasswordIsSame()
+    {
+        var password = "testPassword123";
+        var hashedPassword = PasswordHasher.HashPassword(password);
+        
+        var result = PasswordHasher.VerifyPassword(password, hashedPassword.HashedPassword);
+        
+        Assert.True(result);
     }
     
     [Fact] 
