@@ -31,8 +31,7 @@ public static class PasswordHasher
 
         Password newPassword = new Password()
         {
-            HashedPassword = Convert.ToBase64String(hash),
-            Salt = Convert.ToBase64String(salt),
+            HashedPassword = Convert.ToBase64String(combinedBytes),
             CreatedAt = DateTime.UtcNow
         };
         return newPassword;
