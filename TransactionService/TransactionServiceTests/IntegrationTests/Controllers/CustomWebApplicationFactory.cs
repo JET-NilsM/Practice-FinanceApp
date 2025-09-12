@@ -59,7 +59,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
     private void SeedDatabase(FinanceContext context)
     {
-        context.Accounts.AddRange(new List<AccountEntity>()
+        var accounts = new List<AccountEntity>()
         {
             new AccountEntity()
             {
@@ -73,14 +73,17 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 Email = "test@gmail.com",
                 PhoneNumber = "0612345678"
             }
-        });
-        
-        context.HashedPasswords.AddRange(new List<Password>()
-        {
-            PasswordHasher.HashPassword("ExistingPassword"),
-            PasswordHasher.HashPassword("TestPassword1")
-        });
+        };
 
+        context.Accounts.AddRange(accounts);
+        context.SaveChanges();
+        
+        var password1 = PasswordHasher.HashPassword("ExistingPassword");
+        password1.AccountID = accounts[0].ID;
+        var password2 = PasswordHasher.HashPassword("NewPassword");
+        password2.AccountID = accounts[1].ID;
+        
+        context.HashedPasswords.AddRange(password1, password2);
         context.SaveChanges();
     }
 }
