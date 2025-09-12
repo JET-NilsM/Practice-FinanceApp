@@ -1,4 +1,3 @@
-using TransactionService.DTO;
 using TransactionService.Entities;
 using TransactionService.Mapper;
 using TransactionService.Models;
@@ -78,10 +77,13 @@ public class AccountService : IAccountService
     {
         try
         {
-            Password password = PasswordHasher.HashPassword(newData.Password);
-            if (_repo.GetExistingPassword(id, password) != null)
-                return false;
-            
+            if (!string.IsNullOrEmpty(newData.Password))
+            {
+                Password password = PasswordHasher.HashPassword(newData.Password);
+                if (_repo.GetExistingPassword(id, password) != null)
+                    return false;
+            }
+
             AccountEntity newDataEntity = AccountMapper.ModelToEntity(newData);
             _repo.UpdateAccount(id, newDataEntity);
         }

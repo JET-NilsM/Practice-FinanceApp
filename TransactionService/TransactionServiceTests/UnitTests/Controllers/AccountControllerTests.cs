@@ -11,7 +11,6 @@ using TransactionService.Models;
 using Xunit;
 using Xunit.Abstractions;
 using Moq;
-using TransactionService.DTO;
 using TransactionService.Mapper;
 using TransactionService.Repositories;
 using TransactionService.Services;
@@ -35,7 +34,7 @@ public class AccountControllerTests {
         var mockService = new Mock<IAccountService>();
         var mockLogger = new Mock<ILogger<AccountController>>();
         var accountController = new AccountController(mockService.Object, mockLogger.Object);
-        var newAccount = new AccountDTO()
+        var newAccount = new AccountModel()
         {
             ID = 123,
             FullName = "unit test user",
@@ -177,13 +176,12 @@ public class AccountControllerTests {
             }
         };
 
-        var accountDTO = AccountMapper.ModelToDto(newAccount);
 
         mockService.Setup(service => service.UpdateAccount(1, newAccount));
 
         //Act - testing both attribute validation and CRUD operation
-        ValidateModel(accountDTO, accountController.ModelState);
-        var result = await accountController.CreateAccount(accountDTO);
+        ValidateModel(newAccount, accountController.ModelState);
+        var result = await accountController.CreateAccount(newAccount);
         
         //Assert
         var updatedResult = Assert.IsType<BadRequestResult>(result);  
@@ -198,7 +196,7 @@ public class AccountControllerTests {
         var mockService = new Mock<IAccountService>();
         var mockLogger = new Mock<ILogger<AccountController>>();
         var accountController = new AccountController(mockService.Object, mockLogger.Object);
-        var newData = new AccountDTO()
+        var newData = new AccountModel()
         {
             FullName = "Updated User",
             Email = "test@gmail.com",
@@ -334,11 +332,11 @@ public class AccountControllerTests {
         mockService.Verify(service => service.DeleteAccount(It.IsAny<int>()), Times.Never);
     }
 
-    private void ValidateModel(AccountDTO accountDTO, ModelStateDictionary modelState)
+    private void ValidateModel(AccountModel AccountModel, ModelStateDictionary modelState)
     {
         var validationResults = new List<ValidationResult>();
-        var validationContext = new ValidationContext(accountDTO, null, null);
-        Validator.TryValidateObject(accountDTO, validationContext, validationResults, true);
+        var validationContext = new ValidationContext(AccountModel, null, null);
+        Validator.TryValidateObject(AccountModel, validationContext, validationResults, true);
         foreach (var validationResult in validationResults)
         {
             modelState.AddModelError(

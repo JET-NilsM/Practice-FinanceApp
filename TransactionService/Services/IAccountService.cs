@@ -1,4 +1,3 @@
-using TransactionService.DTO;
 using TransactionService.Models;
 
 namespace TransactionService.Services;

@@ -1,15 +1,14 @@
 using System.Text.Json;
-using TransactionService.DTO;
 using TransactionService.Models;
 
 namespace TransactionService.Utilities;
 
 public static class AccountHelper
 {
-    public static Object? ConvertToProperty(KeyValuePair<string, object> dataEntry, AccountDTO accountDto)
+    public static Object? ConvertToProperty(KeyValuePair<string, object> dataEntry, AccountModel AccountModel)
     {
         // Check if the property exists in the model
-        var property = typeof(AccountDTO).GetProperty(dataEntry.Key);
+        var property = typeof(AccountModel).GetProperty(dataEntry.Key);
         if (property == null || !property.CanWrite)
         {
             return null;
@@ -35,7 +34,7 @@ public static class AccountHelper
         }
 
         Console.WriteLine($"Value: {convertedValue}");
-        property.SetValue(accountDto, convertedValue);
+        property.SetValue(AccountModel, convertedValue);
 
         return convertedValue;
     }

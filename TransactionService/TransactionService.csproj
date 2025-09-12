@@ -325,4 +325,8 @@
       <None Remove="TransactionServiceTests\**" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="DTO\" />
+    </ItemGroup>
+
 </Project>

@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
-using TransactionService.DTO;
 using TransactionService.Models;
 using Xunit.Abstractions;
 using Xunit.Extensions.Logging;
@@ -50,7 +49,7 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
     [Fact]
     public async Task CreateAccount_ReturnsCreated()
     {
-        AccountDTO newAccount = new AccountDTO()
+        AccountModel newAccount = new AccountModel()
         {
             FullName = "John Doe",
             Email = "john.doe@gmail.com",
@@ -62,7 +61,7 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
         
         HttpResponseMessage response = await _client.PostAsync("/api/account", stringContent);
         
-        var returnedAccount = await response.Content.ReadFromJsonAsync<AccountDTO>();
+        var returnedAccount = await response.Content.ReadFromJsonAsync<AccountModel>();
         
         Assert.NotNull(returnedAccount);
         Assert.Equal(newAccount.FullName, returnedAccount.FullName);
@@ -70,14 +69,10 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
         Assert.Equal(newAccount.PhoneNumber, returnedAccount.PhoneNumber);
     }
     
-    //Create account should return badrequest if the email address is already in use
-    
-    
-    //Invalid data (invalid email) should return badrequest
     [Fact]
     public async Task CreateAccount_InvalidEmail_ReturnsBadRequest()
     {
-        AccountDTO newAccountModel = new AccountDTO()
+        AccountModel newAccount = new AccountModel()
         {
             FullName = "Jane Doe",
             Email = "invalid-email",
@@ -85,7 +80,7 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
             PhoneNumber = "0612345678"
         };
         
-        var stringContent = new StringContent(JsonSerializer.Serialize(newAccountModel), Encoding.UTF8, "application/json");
+        var stringContent = new StringContent(JsonSerializer.Serialize(newAccount), Encoding.UTF8, "application/json");
         
         HttpResponseMessage response = await _client.PostAsync("/api/account", stringContent);
         
@@ -126,13 +121,10 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
         Assert.Contains(accounts, a => a.FullName == "Nils Meijer");
     }
 
-    //put update account should return ok if account exists and is updated successfully
-
-    //put update account should return notfound if account does not exist
     [Fact]
     public async Task PutAccount_DoesNotExist_ReturnNotFound()
     {
-        AccountDTO newData = new AccountDTO
+        AccountModel newData = new AccountModel()
         {
             FullName = "Updated Name",
             Email = "test@gmail.com",
@@ -147,7 +139,6 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
-    //delete account should return ok if account exists and is deleted successfully
     [Fact]
     public async Task DeleteAccount_ReturnsOk()
     {
@@ -156,7 +147,6 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
-    //delete account should return notfound if account does not exist
     [Fact]
     public async Task DeleteAccount_WhenDoesNotExist_ReturnsNotFound()
     {
@@ -165,7 +155,6 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
-    //patch account should return ok if account exists and is patched successfully
     [Fact]
     public async Task PatchAccount_ReturnsOk()
     {
@@ -183,7 +172,6 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
-    //patch account should return notfound if account does not exist
     [Fact]
     public async Task PatchAccount_AccountDoesNotExist_ReturnNotFound()
     {
@@ -199,7 +187,6 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
     
-    //patch account should return badrequest if patch data is invalid
     [Fact]
     public async Task PatchAccount_InvalidData_ReturnsBadRequest()
     {
@@ -215,11 +202,10 @@ public class AccountControllerTests : IClassFixture<CustomWebApplicationFactory>
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
     
-    //Invalid password (already exists for user) should return badrequest
     [Fact]
     public async Task PatchAccount_ExistingPassword_ReturnsBadRequest()
     {
-        AccountDTO newAccountModel = new AccountDTO()
+        AccountModel newAccountModel = new AccountModel()
         {
             FullName = "Jane Doe",
             Email = "janeDoe@gmail.com",

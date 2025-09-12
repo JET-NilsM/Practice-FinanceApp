@@ -3,7 +3,6 @@ using System.Net.Mail;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using TransactionService.Data;
-using TransactionService.DTO;
 using TransactionService.Mapper;
 using TransactionService.Models;
 using TransactionService.Repositories;
@@ -27,7 +26,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateAccount(AccountDTO? incomingData)
+    public async Task<IActionResult> CreateAccount(AccountModel? incomingData)
     {
         _logger.LogInformation("---- Reached the PUT account method ----");
 
@@ -36,14 +35,11 @@ public class AccountController : ControllerBase
 
         if(incomingData == null)
             return BadRequest();
-
-        AccountModel newAccountModel = AccountMapper.DtoToModel(incomingData);
-
-        if (!_service.AddAccount(newAccountModel))
+        
+        if (!_service.AddAccount(incomingData))
             return BadRequest();
 
-        AccountDTO accountDto = AccountMapper.ModelToDto(newAccountModel);
-        return Created("/api/account", accountDto);
+        return Created("/api/account", incomingData);
     }
 
     [HttpGet("{id:int}")]
@@ -54,9 +50,8 @@ public class AccountController : ControllerBase
         AccountModel selectedAccountModel = _service.GetAccount(id);
         if(selectedAccountModel == null)
             return NotFound();
-        AccountDTO accountDto = AccountMapper.ModelToDto(selectedAccountModel);
 
-        return Ok(accountDto);
+        return Ok(selectedAccountModel);
     }
 
     [HttpGet]
@@ -75,7 +70,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPut("{givenID:int}")]
-    public async Task<IActionResult> UpdateAccount(int givenID, AccountDTO accountDto)
+    public async Task<IActionResult> UpdateAccount(int givenID, AccountModel model)
     {
         _logger.LogInformation("---- Reached the PUT account method ----");
 
@@ -83,11 +78,10 @@ public class AccountController : ControllerBase
         if (selectedAccountModel == null)
             return NotFound();
 
-        AccountModel accountModel = AccountMapper.DtoToModel(accountDto);
-        if(!_service.UpdateAccount(givenID, accountModel))
+        if(!_service.UpdateAccount(givenID, model))
             return BadRequest();
 
-        return Ok(accountDto);
+        return Ok(model);
     }
 
     [HttpPatch("{givenID:int}")]
@@ -102,16 +96,15 @@ public class AccountController : ControllerBase
         if (!newData.Any())
             return BadRequest();
         
-        AccountDTO accountDto = AccountMapper.ModelToDto(existingAccountModel);
         foreach (var dataEntry in newData)
         {
             if (dataEntry.Key == "ID")
                 continue;
-
+                
             object? convertedValue;
             try
             {
-                convertedValue = AccountHelper.ConvertToProperty(dataEntry, accountDto);
+                convertedValue = AccountHelper.ConvertToProperty(dataEntry, existingAccountModel);
             }
             catch (Exception ex)
             {
@@ -123,8 +116,7 @@ public class AccountController : ControllerBase
                 return BadRequest(); 
         }
         
-        AccountModel newAccountModel = AccountMapper.DtoToModel(accountDto);
-        if(!_service.UpdateAccount(givenID, newAccountModel))
+        if(!_service.UpdateAccount(givenID, existingAccountModel))
             return BadRequest();
 
         return Ok();
