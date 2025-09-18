@@ -3,8 +3,10 @@ using System.Net.Mail;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using TransactionService.Data;
+using TransactionService.Mapper;
 using TransactionService.Models;
 using TransactionService.Repositories;
+using TransactionService.Services;
 using TransactionService.Utilities;
 using Xunit.Sdk;
 
@@ -14,123 +16,123 @@ namespace TransactionService.Controllers;
 [Route("api/[controller]")]
 public class AccountController : ControllerBase
 {
-    private AccountsModel _accountsModel;
-    private IAccountRepository _repo;
+    private IAccountService _service;
+    private readonly ILogger _logger;
 
-    public AccountController(IAccountRepository repo)
+    public AccountController(IAccountService service, ILogger<AccountController> logger)
     {
-        _repo = repo;
+        _service = service;
+        _logger = logger;
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateAccount(Account account)
+    public async Task<IActionResult> CreateAccount(AccountModel? incomingData)
     {
+        _logger.LogInformation("---- Reached the PUT account method ----");
+
         if (!ModelState.IsValid)
-            return BadRequest("Invalid account data provided.");
+            return BadRequest(); 
 
-        //Name "empty" check is not necessary since the FullName property is required in the Account model,
-        //It could be checked whether the name is valid but that is probably not necessary for now
-        if (account == null)
-            return BadRequest("Account data is null.");
+        if(incomingData == null)
+            return BadRequest();
+        
+        if (!_service.AddAccount(incomingData))
+            return BadRequest();
 
-        //Check if ID already exists
-        Account existingAccount = _repo.GetAccount(account.ID);
-        if (existingAccount != null)
-            return BadRequest($"Account with ID: {account.ID} already exists.");
-
-        Account newAccount = new Account()
-        {
-            ID = account.ID,
-            FullName = account.FullName,
-            Email = account.Email,
-            Password = account.Password,
-            PhoneNumber = account.PhoneNumber,
-            Data = new List<AccountData>()
-            {
-                new AccountData()
-                {
-                    Account = account,
-                    Balance = account.Data?.FirstOrDefault()?.Balance ?? 0.0f, // Default to 0 if no balance is provided
-                    Type = account.Data?.FirstOrDefault()?.Type ?? AccountType.Student // Default to Student if no type is provided
-                }
-            }
-        };
-
-        _repo.AddAccount(newAccount);
-
-        return Created("Account created successfully.", newAccount.FullName);
+        return Created("/api/account", incomingData);
     }
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetAccount(int id)
     {
-        Account selectedAccount = _repo.GetAccount(id);
-        if (selectedAccount == null)
-            return NotFound($"Account with ID: {id} not found.");
+        _logger.LogInformation("---- Reached the GET account method ----");
 
-        return Ok(selectedAccount);
+        AccountModel selectedAccountModel = _service.GetAccount(id);
+        if(selectedAccountModel == null)
+            return NotFound();
+
+        return Ok(selectedAccountModel);
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAccounts()
     {
-        List<Account> accounts = _repo.GetAccounts();
+        _logger.LogInformation("---- Reached the GET accounts method ----");
+
+        List<AccountModel> accounts = _service.GetAccounts();
         if (accounts == null)
-            return NotFound("Accounts collection does not exist");
+            return NotFound();
 
         if (accounts.Count == 0)
-            return NotFound("Accounts collection is empty.");
+            return NotFound();
 
         return Ok(accounts);
     }
 
     [HttpPut("{givenID:int}")]
-    public async Task<IActionResult> UpdateAccount(int givenID, Account newAccountData)
+    public async Task<IActionResult> UpdateAccount(int givenID, AccountModel model)
     {
-        Account selectedAccount = _repo.GetAccount(givenID);
-        if (selectedAccount == null)
-            return NotFound($"Account with ID: {givenID} not found.");
+        _logger.LogInformation("---- Reached the PUT account method ----");
 
-        _repo.UpdateAccount(givenID, newAccountData);
+        AccountModel selectedAccountModel = _service.GetAccount(givenID);
+        if (selectedAccountModel == null)
+            return NotFound();
 
-        return Ok($"Full account updated successfully.");
+        if(!_service.UpdateAccount(givenID, model))
+            return BadRequest();
+
+        return Ok(model);
     }
 
     [HttpPatch("{givenID:int}")]
     public async Task<IActionResult> UpdateAccount(int givenID, Dictionary<string, object> newData)
     {
-        Account selectedAccount = _repo.GetAccount(givenID);
-        if (selectedAccount == null)
-            return NotFound($"Account with ID: {givenID} not found.");
+        _logger.LogInformation("---- Reached the PATCH account method ----");
+
+        AccountModel? existingAccountModel = _service.GetAccount(givenID);
+        if (existingAccountModel == null)
+            return NotFound();
 
         if (!newData.Any())
-            return BadRequest("No data provided for update.");
-
-        string allDictionaryContents = "";
-
+            return BadRequest();
+        
         foreach (var dataEntry in newData)
         {
-            object? convertedValue = AccountHelper.ConvertToProperty(dataEntry, selectedAccount);
+            if (dataEntry.Key == "ID")
+                continue;
+                
+            object? convertedValue;
+            try
+            {
+                convertedValue = AccountHelper.ConvertToProperty(dataEntry, existingAccountModel);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error converting property: " + ex.Message);
+                return BadRequest();
+            }
 
             if (convertedValue == null)
-                return BadRequest($"Invalid data for property: {dataEntry.Key}");
-
-            //Just for debugging to check if the dictionary is being processed correctly from Insomnia > controller
-            allDictionaryContents += $"{dataEntry.Key}: {convertedValue}\n";
+                return BadRequest(); 
         }
 
-        return Ok($"Account with ID: {givenID} updated successfully. New data: {allDictionaryContents}");
+        if(!_service.UpdateAccount(givenID, existingAccountModel))
+            return BadRequest();
+
+        return Ok();
     }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteAccount(int id)
     {
-        Account selectedAccount = _repo.GetAccount(id);
-        if (selectedAccount == null)
-            return NotFound($"Account with ID: {id} not found.");
+        _logger.LogInformation("---- Reached the DELETE account method ----");
 
-        _repo.DeleteAccount(id);
+        AccountModel selectedAccountModel = _service.GetAccount(id);
+        if (selectedAccountModel == null)
+            return NotFound();
 
-        return Ok("Account deleted successfully.");
+        _service.DeleteAccount(id);
+
+        return Ok();
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TransactionService.Data;
@@ -11,9 +12,11 @@ using TransactionService.Data;
 namespace TransactionService.Migrations
 {
     [DbContext(typeof(FinanceContext))]
-    partial class FinanceContextModelSnapshot : ModelSnapshot
+    [Migration("20250901120831_RemovePasswordFromAccounts")]
+    partial class RemovePasswordFromAccounts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,32 +48,6 @@ namespace TransactionService.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Accounts");
-                });
-
-            modelBuilder.Entity("TransactionService.Models.AccountData", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Relational:JsonPropertyName", "id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
-
-                    b.Property<int>("AccountID")
-                        .HasColumnType("integer")
-                        .HasAnnotation("Relational:JsonPropertyName", "accountID");
-
-                    b.Property<float>("Balance")
-                        .HasColumnType("real")
-                        .HasAnnotation("Relational:JsonPropertyName", "balance");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("integer")
-                        .HasAnnotation("Relational:JsonPropertyName", "type");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("AccountData");
                 });
 
             modelBuilder.Entity("TransactionService.Models.Password", b =>

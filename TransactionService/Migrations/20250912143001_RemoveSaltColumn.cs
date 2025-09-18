@@ -5,24 +5,25 @@
 namespace TransactionService.Migrations
 {
     /// <inheritdoc />
-    public partial class RenameIDVariable : Migration
+    public partial class RemoveSaltColumn : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "Id",
-                table: "Accounts",
-                newName: "AccountID");
+            migrationBuilder.DropColumn(
+                name: "Salt",
+                table: "HashedPasswords");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "AccountID",
-                table: "Accounts",
-                newName: "Id");
+            migrationBuilder.AddColumn<string>(
+                name: "Salt",
+                table: "HashedPasswords",
+                type: "text",
+                nullable: false,
+                defaultValue: "");
         }
     }
 }

@@ -1,13 +1,14 @@
+using TransactionService.Entities;
 using TransactionService.Models;
 
 namespace TransactionService.Repositories;
 
 public interface IAccountRepository : IDisposable
 {
-    List<Account> GetAccounts();
-    Account GetAccount(int id);
-    void AddAccount(Account account);
+    List<AccountEntity> GetAccounts();
+    AccountEntity? GetAccount(int id);
+    AccountEntity? AddAccount(AccountEntity entity, Password hashedPassword);
     void DeleteAccount(int id);
-    void UpdateAccount(int id, Account newData);
-    void Save();
+    AccountEntity? UpdateAccount(int id, AccountEntity newData);
+    Password? GetExistingPassword(int accountID, Password password);
 }

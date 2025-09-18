@@ -22,6 +22,10 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+bin/
+obj/
+
+appsettings.Development.json
 
 # .NET Core
 project.lock.json
@@ -55,7 +59,28 @@ nunit-*.xml
 
 .DS_Store
 
-TransactionService/appsettings.json
-TransactionService/.idea/.idea.TransactionService/.idea/aws.xml
-TransactionService/.idea/.idea.TransactionService/.idea/aws.xml
-TransactionService/TransactionService.sln.DotSettings.user
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider project files
+.idea/
+*.sln.iml
+
+# Visual Studio Code
+.vscode/
+
+# Resharper
+*.DotSettings.user
+
+# Logs
+*.log
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Icon?
+Desktop.ini
+$RECYCLE.BIN/

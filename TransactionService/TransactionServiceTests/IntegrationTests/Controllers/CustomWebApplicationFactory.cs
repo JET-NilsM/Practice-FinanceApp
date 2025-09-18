@@ -4,8 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 using TransactionService.Data;
+using TransactionService.Entities;
 using TransactionService.Models;
+using TransactionService.Utilities;
+using Xunit.Extensions.Logging;
 
 namespace TransactionServiceTests.Integration_Tests;
 
@@ -16,15 +20,22 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        builder.ConfigureLogging(logging =>
+        {
+            logging.ClearProviders();
+            logging.AddConsole();
+            logging.SetMinimumLevel(LogLevel.Debug);
+        });
+        
         builder.ConfigureServices((context, services) =>
         {
             var config = context.Configuration;
-            var connectionString = config.GetConnectionString("TestDatabase");
+            var connectionString = config.GetConnectionString("DefaultConnection");
             
             services.RemoveAll<DbContextOptions<FinanceContext>>();
             services.AddDbContext<FinanceContext>(options =>
             {
-                options.UseSqlServer(connectionString);
+                options.UseNpgsql(connectionString);
             });
             
             var serviceProvider = services.BuildServiceProvider();
@@ -35,9 +46,11 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
             db.Database.EnsureCreated();
             db.Accounts.RemoveRange(db.Accounts);
-            db.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('Accounts', RESEED, 0)");
-            db.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('AccountData', RESEED, 0)");
-
+            db.HashedPasswords.RemoveRange(db.HashedPasswords);
+            
+            //TODO fix naming inconsistency (ID/Id)
+            db.Database.ExecuteSqlRaw("ALTER SEQUENCE \"Accounts_ID_seq\" RESTART WITH 1;");
+            db.Database.ExecuteSqlRaw("ALTER SEQUENCE \"HashedPasswords_Id_seq\" RESTART WITH 1;");
             SeedDatabase(db);
         });
         
@@ -46,41 +59,31 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
     private void SeedDatabase(FinanceContext context)
     {
-        context.Accounts.AddRange(new List<Account>()
+        var accounts = new List<AccountEntity>()
         {
-            new Account
+            new AccountEntity()
             {
                 FullName = "Nils Meijer",
                 Email = "test@gmail.com",
-                Password = "testpassword123",
-                PhoneNumber = "0612345678",
-                Data = new List<AccountData>()
-                {
-                    new AccountData()
-                    {
-                        Balance = 100.0f,
-                        Type = AccountType.Student
-                    }
-                }
+                PhoneNumber = "0612345678"
             },
-            new Account()
+            new AccountEntity()
             {
                 FullName = "Henk Jansen",
                 Email = "test@gmail.com",
-                Password = "testpassword123",
-                PhoneNumber = "0612345678",
-                Data = new List<AccountData>()
-                {
-                    new AccountData()
-                    {
-                        Balance = 200.0f,
-                        Type = AccountType.Youth
-                    }
-                }
+                PhoneNumber = "0612345678"
             }
-        });
+        };
 
+        context.Accounts.AddRange(accounts);
+        context.SaveChanges();
+        
+        var password1 = PasswordHasher.HashPassword("ExistingPassword");
+        password1.AccountID = accounts[0].ID;
+        var password2 = PasswordHasher.HashPassword("NewPassword");
+        password2.AccountID = accounts[1].ID;
+        
+        context.HashedPasswords.AddRange(password1, password2);
         context.SaveChanges();
     }
-    
 }

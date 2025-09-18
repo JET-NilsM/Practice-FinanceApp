@@ -7,12 +7,10 @@ namespace TransactionService.Controllers;
 public class TransactionController : ControllerBase
 {
     private TransactionsModel _transactionsModel;
-    private AccountsModel _accountsModel;
 
     public TransactionController()
     {
         _transactionsModel = new TransactionsModel();
-        _accountsModel = new AccountsModel();
     }
 
     //Create transaction (Create)

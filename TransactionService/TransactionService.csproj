@@ -6,10 +6,12 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="EntityFramework" Version="6.5.1" />
+      <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.3.1" />
       <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.7" />
       <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.7" />
@@ -20,8 +22,10 @@
       </PackageReference>
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
       <PackageReference Include="Moq" Version="4.20.72" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
       <PackageReference Include="xunit" Version="2.9.3" />
-      <PackageReference Include="xunit.runner.visualstudio" Version="3.1.1">
+      <PackageReference Include="Xunit.Extensions.Logging" Version="1.1.0" />
+      <PackageReference Include="xunit.runner.visualstudio" Version="2.9.3">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
@@ -33,16 +37,296 @@
 
     <ItemGroup>
       <Compile Remove="Models\PhoneNumber.cs" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Migrations\" />
+      <Compile Remove="TransactionServiceTests\**" />
     </ItemGroup>
 
     <ItemGroup>
       <_ContentIncludedByDefault Remove="TransactionServiceTests\obj\project.assets.json" />
       <_ContentIncludedByDefault Remove="TransactionServiceTests\obj\project.packagespec.json" />
       <_ContentIncludedByDefault Remove="TransactionServiceTests\obj\TransactionServiceTests.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\alpine\x64\Cov_x64.config" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\CodeCoverage\amd64\Cov_x64.config" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\CodeCoverage\arm64\Cov_arm64.config" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\CodeCoverage\CodeCoverage.config" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\CodeCoverage\Cov_x86.config" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\macos\x64\Cov_x64.config" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\publish\alpine\x64\Cov_x64.config" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\publish\CodeCoverage\amd64\Cov_x64.config" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\publish\CodeCoverage\arm64\Cov_arm64.config" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\publish\CodeCoverage\CodeCoverage.config" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\publish\CodeCoverage\Cov_x86.config" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\publish\macos\x64\Cov_x64.config" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\publish\ubuntu\x64\Cov_x64.config" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\ubuntu\x64\Cov_x64.config" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\publish\alpine\x64\Cov_x64.config" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\publish\CodeCoverage\amd64\Cov_x64.config" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\publish\CodeCoverage\arm64\Cov_arm64.config" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\publish\CodeCoverage\CodeCoverage.config" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\publish\CodeCoverage\Cov_x86.config" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\publish\macos\x64\Cov_x64.config" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\publish\ubuntu\x64\Cov_x64.config" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\appsettings.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionService.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionService.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.endpoints.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.runtime.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\appsettings.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.endpoints.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.runtime.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\appsettings.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.endpoints.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.runtime.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\TransactionServiceTests.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\Debug\net9.0\TransactionServiceTests.sourcelink.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\TransactionServiceTests.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\Debug\net9.0\TransactionServiceTests.sourcelink.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\TransactionServiceTests.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\appsettings.Development.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\appsettings.Development.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\coverlet.collector.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionService.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionService.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\appsettings.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionService.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionService.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.endpoints.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.runtime.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\appsettings.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.endpoints.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.runtime.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\appsettings.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.endpoints.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.runtime.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\TransactionServiceTests.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\Debug\net9.0\TransactionServiceTests.sourcelink.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\TransactionServiceTests.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\Debug\net9.0\TransactionServiceTests.sourcelink.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\TransactionServiceTests.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\appsettings.Development.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\publish\coverlet.collector.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionService.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionService.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionService.staticwebassets.endpoints.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionService.staticwebassets.runtime.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\appsettings.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.endpoints.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.runtime.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\appsettings.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.endpoints.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.runtime.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\appsettings.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.endpoints.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.runtime.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\TransactionServiceTests.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\Debug\net9.0\TransactionServiceTests.sourcelink.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\TransactionServiceTests.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\Debug\net9.0\TransactionServiceTests.sourcelink.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\TransactionServiceTests.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\obj\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\obj\Debug\net9.0\TransactionServiceTests.sourcelink.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\obj\TransactionServiceTests.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\obj\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\obj\Debug\net9.0\TransactionServiceTests.sourcelink.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\obj\Release\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\obj\Release\net9.0\TransactionServiceTests.sourcelink.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\publish\TransactionServiceTests\obj\TransactionServiceTests.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionService.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionService.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionService.staticwebassets.endpoints.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionService.staticwebassets.runtime.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\appsettings.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.endpoints.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.runtime.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\appsettings.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.endpoints.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.runtime.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\appsettings.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.endpoints.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.runtime.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\TransactionServiceTests.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\Debug\net9.0\TransactionServiceTests.sourcelink.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\TransactionServiceTests.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\Debug\net9.0\TransactionServiceTests.sourcelink.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\TransactionServiceTests.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\appsettings.Development.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\publish\coverlet.collector.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionService.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionService.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionService.staticwebassets.endpoints.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionService.staticwebassets.runtime.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\appsettings.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.endpoints.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.runtime.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\appsettings.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.endpoints.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.runtime.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\appsettings.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.endpoints.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionService.staticwebassets.runtime.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.deps.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\TransactionServiceTests.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\Debug\net9.0\TransactionServiceTests.sourcelink.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\TransactionServiceTests.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\Debug\net9.0\TransactionServiceTests.sourcelink.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Debug\net9.0\TransactionServiceTests\obj\TransactionServiceTests.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\obj\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\obj\Debug\net9.0\TransactionServiceTests.sourcelink.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\obj\TransactionServiceTests.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\obj\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\obj\Debug\net9.0\TransactionServiceTests.sourcelink.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\obj\Release\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\obj\Release\net9.0\TransactionServiceTests.sourcelink.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\bin\Release\net9.0\TransactionServiceTests\obj\TransactionServiceTests.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\obj\Debug\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\obj\Debug\net9.0\TransactionServiceTests.sourcelink.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\obj\Release\net9.0\MvcTestingAppManifest.json" />
+      <_ContentIncludedByDefault Remove="TransactionServiceTests\obj\Release\net9.0\TransactionServiceTests.sourcelink.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="TransactionServiceTests\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="TransactionServiceTests\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="TransactionServiceTests\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="DTO\" />
     </ItemGroup>
 
 </Project>

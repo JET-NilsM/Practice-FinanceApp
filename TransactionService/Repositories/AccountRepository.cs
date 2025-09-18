@@ -1,6 +1,7 @@
 using System.Data.Entity;
+using Microsoft.AspNetCore.Components.Web;
 using TransactionService.Data;
-using TransactionService.Migrations;
+using TransactionService.Entities;
 using TransactionService.Models;
 
 namespace TransactionService.Repositories;
@@ -11,26 +12,42 @@ namespace TransactionService.Repositories;
 public class AccountRepository : IAccountRepository
 {
     private FinanceContext _context;
+    private readonly ILogger _logger;
     
-    public AccountRepository(FinanceContext context)
+    public AccountRepository(FinanceContext context, ILogger<AccountRepository> logger)
     {
         _context = context;
+        _logger = logger;
     }
     
-    public List<Account> GetAccounts()
+    public List<AccountEntity> GetAccounts()
     {
         return _context.Accounts.ToList();
     }
 
-    public Account GetAccount(int id)
+    public AccountEntity? GetAccount(int id)
     {
-        return _context.Accounts.Find(id);
+        AccountEntity accountEntity;
+        try
+        {
+            accountEntity = _context.Accounts.Find(id);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Error when retrieving account: " + e.Message);
+            return null;
+        }
+
+        return accountEntity;
     }
     
-    public void AddAccount(Account account)
+    public AccountEntity? AddAccount(AccountEntity entity, Password hashedPassword)
     {
-        _context.Accounts.Add(account);
-        Save();
+        _context.HashedPasswords.Add(hashedPassword);       
+        _context.Accounts.Add(entity);
+        if(Save())
+            return entity;
+        return null;
     }
     
     public void DeleteAccount(int id)
@@ -39,46 +56,64 @@ public class AccountRepository : IAccountRepository
         if (account != null)
         {
             _context.Accounts.Remove(account);
-            Save();
         } else throw new KeyNotFoundException($"Account with ID {id} not found.");
-    }
 
-    public void UpdateAccount(int id, Account newData)
-    {
-        var account = _context.Accounts.Find(id);
-        if (account == null) 
-            return;
-        
-        account.FullName = newData.FullName;
-        account.Email = newData.Email;
-        account.Password = newData.Password;
-        account.PhoneNumber = newData.PhoneNumber;
-        account.Data = new List<AccountData>()
-        {
-            new AccountData()
-            {
-                Account = account,
-                Balance = newData.Data?.FirstOrDefault()?.Balance ?? 0.0f, // Default to 0 if no balance is provided
-                Type = newData.Data?.FirstOrDefault()?.Type ??
-                       AccountType.Student // Default to Student if no type is provided
-            }
-        };
-        
         Save();
     }
 
-    public void Save()
+    public AccountEntity? UpdateAccount(int id, AccountEntity newData)
     {
-        _context.SaveChanges();
+        var account = _context.Accounts.Find(id);
+        if (account == null)
+            return null;
+        
+        account.FullName = newData.FullName;
+        account.Email = newData.Email;
+        account.PhoneNumber = newData.PhoneNumber;
+
+        if(Save())
+            return account;
+        return null;
+    }
+
+    public Password? GetExistingPassword(int accountID, Password password)
+    {
+        _logger.LogInformation("Reached GetExistingPassword() method in AccountRepository.");
+        try
+        {
+            var oldPasswordsForAccount = _context.HashedPasswords.Where(stored => stored.AccountID == accountID);
+            foreach (var existingPassword in oldPasswordsForAccount)
+            {
+                if (existingPassword.HashedPassword == password.HashedPassword)
+                    return password;
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Error when retrieving existing password: " + e.Message);
+            return null;
+        }
+
+        return null;
+    }
+
+    public bool Save()
+    {
+        try
+        {
+            _context.Save();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error occured when saving to database: " + e);
+            return false;
+        }
+        
+        return true;
     }
 
     public void Dispose()
     {
         _context.Dispose();
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
     }
 }

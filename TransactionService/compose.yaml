@@ -1,0 +1,18 @@
+﻿services:
+  transactionservice:
+    image: transaction-service-test
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+    - "5001:5001"
+  postgres:
+    image: postgres
+    container_name: postgres_db
+    environment:
+      - POSTGRES_USER=nils
+      - POSTGRES_PASSWORD="YourStrongPassw0rd"
+      - POSTGRES_DB=finance_db
+    platform: linux/amd64
+    ports:
+    - "5432:5432"

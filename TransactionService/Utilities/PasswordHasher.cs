@@ -1,0 +1,68 @@
+using System.Security.Cryptography;
+using System.Text;
+using Konscious.Security.Cryptography;
+using TransactionService.Models;
+
+namespace TransactionService.Utilities;
+
+public static class PasswordHasher
+{
+    private const int SaltSize = 16;
+    private const int HashSize = 32;
+    private const int DegreeOfParallelism = 8;
+    private const int Iterations = 4;
+    private const int MemorySize = 1024 * 64; // 64 MB
+    
+    public static Password HashPassword(string password)
+    {
+        //generate the salt and hash
+        byte[] salt = new byte[SaltSize];
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            rng.GetBytes(salt);
+        }
+        
+        byte[] hash = HashPassword(password, salt);
+
+        //Combine the hash and salt into one array, where the salt is placed at index 0 and the hash is placed after the salt.
+        var combinedBytes = new byte[salt.Length + hash.Length];
+        Array.Copy(salt, 0, combinedBytes, 0, salt.Length);
+        Array.Copy(hash, 0, combinedBytes, salt.Length, hash.Length);
+
+        Password newPassword = new Password()
+        {
+            HashedPassword = Convert.ToBase64String(combinedBytes),
+            CreatedAt = DateTime.UtcNow
+        };
+        return newPassword;
+    }
+    
+    private static byte[] HashPassword(string password, byte[] salt)
+    {
+        var argon2id = new Argon2id(Encoding.UTF8.GetBytes(password))
+        {
+            Salt = salt,
+            DegreeOfParallelism = DegreeOfParallelism,
+            Iterations = Iterations,
+            MemorySize = MemorySize
+        };
+
+        return argon2id.GetBytes(HashSize);
+    }
+
+    public static bool VerifyPassword(string password, string hashedPassword)
+    {
+        byte[] combinedBytes = Convert.FromBase64String(hashedPassword);
+        
+        byte[] extractedSalt = new byte[SaltSize];
+        byte[] extractedHash = new byte[HashSize];
+        
+        //extract the salt and hash from the combined array
+        Array.Copy(combinedBytes, 0, extractedSalt, 0, SaltSize);
+        Array.Copy(combinedBytes, SaltSize, extractedHash, 0, HashSize);
+
+        byte[] newHash = HashPassword(password, extractedSalt);
+        
+        return CryptographicOperations.FixedTimeEquals(extractedHash, newHash);
+    }
+}
