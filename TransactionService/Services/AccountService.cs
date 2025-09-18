@@ -14,17 +14,17 @@ public class AccountService : IAccountService
     public AccountService(IAccountRepository repo, ILogger<IAccountService> logger)
     {
         _repo = repo;
+        _logger = logger;
     }
     
     public bool AddAccount(AccountModel model)
     {
-        Password hashedPasswordData = PasswordHasher.HashPassword(model.Password);
-        AccountEntity entity = AccountMapper.ModelToEntity(model);
-        hashedPasswordData.AccountID = entity.ID;
-        hashedPasswordData.CreatedAt = DateTime.Now;
-
         try
         { 
+            Password hashedPasswordData = PasswordHasher.HashPassword(model.Password);
+            AccountEntity entity = AccountMapper.ModelToEntity(model);
+            hashedPasswordData.AccountID = entity.ID;
+            hashedPasswordData.CreatedAt = DateTime.Now;
             _repo.AddAccount(entity, hashedPasswordData);
         }
         catch (Exception e)
@@ -89,8 +89,7 @@ public class AccountService : IAccountService
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error when updating account: " + e.Message);
-            return false;
+            _logger.LogError("Error when updating account: " + e.Message);
         }
 
         return true;

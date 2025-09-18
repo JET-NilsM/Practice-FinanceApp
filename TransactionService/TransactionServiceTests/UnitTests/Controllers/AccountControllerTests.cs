@@ -43,9 +43,9 @@ public class AccountControllerTests {
             Password = "testPassword123",
             PhoneNumber = "+31 6 12345678",
         };
-
-        mockService.Setup(service => service.GetAccount(newAccount.ID)).Returns((AccountModel)null);
-
+        
+        mockService.Setup(service => service.AddAccount(newAccount)).Returns(true);
+        
         // Act
         ValidateModel(newAccount, accountController.ModelState);
         var result = await accountController.CreateAccount(newAccount);
@@ -270,11 +270,15 @@ public class AccountControllerTests {
                 1,2
             }
         };
-        mockService.Setup(service => service.GetAccount(existingAccount.ID)).Returns(existingAccount);
+        
+        mockService.Setup(service => service.GetAccount(1)).Returns(existingAccount);
+        mockService.Setup(service => service.UpdateAccount(1, It.IsAny<AccountModel>())).Returns(true);
         
         Dictionary<string, object> newData = new Dictionary<string, object>
         {
-            { "Email", "unitTest@gmail.com" }
+            {
+                "FullName", "Test User"
+            }
         };
         
         // Act
@@ -331,9 +335,10 @@ public class AccountControllerTests {
     public async Task VerifyPassword_ShouldReturnOk_WhenPasswordIsSame()
     {
         var password = "testPassword123";
+        var anotherPassword = "testPassword123";
         var hashedPassword = PasswordHasher.HashPassword(password);
         
-        var result = PasswordHasher.VerifyPassword(password, hashedPassword.HashedPassword);
+        var result = PasswordHasher.VerifyPassword(anotherPassword, hashedPassword.HashedPassword);
         
         Assert.True(result);
     }

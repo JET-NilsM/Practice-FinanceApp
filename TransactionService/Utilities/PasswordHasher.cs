@@ -21,7 +21,7 @@ public static class PasswordHasher
         {
             rng.GetBytes(salt);
         }
-
+        
         byte[] hash = HashPassword(password, salt);
 
         //Combine the hash and salt into one array, where the salt is placed at index 0 and the hash is placed after the salt.
@@ -36,7 +36,7 @@ public static class PasswordHasher
         };
         return newPassword;
     }
-
+    
     private static byte[] HashPassword(string password, byte[] salt)
     {
         var argon2id = new Argon2id(Encoding.UTF8.GetBytes(password))
@@ -54,15 +54,15 @@ public static class PasswordHasher
     {
         byte[] combinedBytes = Convert.FromBase64String(hashedPassword);
         
-        byte[] salt = new byte[SaltSize];
-        byte[] hash = new byte[HashSize];
+        byte[] extractedSalt = new byte[SaltSize];
+        byte[] extractedHash = new byte[HashSize];
         
-        //extract the hash and salt from the combined array
-        Array.Copy(combinedBytes, 0, salt, 0, SaltSize);
-        Array.Copy(combinedBytes, SaltSize, hash, 0, HashSize);
+        //extract the salt and hash from the combined array
+        Array.Copy(combinedBytes, 0, extractedSalt, 0, SaltSize);
+        Array.Copy(combinedBytes, SaltSize, extractedHash, 0, HashSize);
 
-        byte[] newHash = HashPassword(password, salt);
+        byte[] newHash = HashPassword(password, extractedSalt);
         
-        return CryptographicOperations.FixedTimeEquals(hash, newHash);
+        return CryptographicOperations.FixedTimeEquals(extractedHash, newHash);
     }
 }

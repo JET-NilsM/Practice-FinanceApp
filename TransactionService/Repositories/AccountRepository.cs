@@ -78,6 +78,7 @@ public class AccountRepository : IAccountRepository
 
     public Password? GetExistingPassword(int accountID, Password password)
     {
+        _logger.LogInformation("Reached GetExistingPassword() method in AccountRepository.");
         try
         {
             var oldPasswordsForAccount = _context.HashedPasswords.Where(stored => stored.AccountID == accountID);
